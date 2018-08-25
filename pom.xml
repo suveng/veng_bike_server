@@ -52,6 +52,11 @@
             <artifactId>mybatis-generator-core</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 
 

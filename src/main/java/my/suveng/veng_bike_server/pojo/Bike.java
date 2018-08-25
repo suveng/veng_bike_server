@@ -1,19 +1,19 @@
 package my.suveng.veng_bike_server.pojo;
 
 public class Bike {
-    private Integer id;
+    private String id;
 
     private String qrCode;
 
     private Double latitude;
 
-    private Double longtitude;
+    private Double longitude;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -33,11 +33,11 @@ public class Bike {
         this.latitude = latitude;
     }
 
-    public Double getLongtitude() {
-        return longtitude;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setLongtitude(Double longtitude) {
-        this.longtitude = longtitude;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }

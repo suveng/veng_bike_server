@@ -5,10 +5,10 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="qr_code" property="qrCode" jdbcType="VARCHAR" />
     <result column="latitude" property="latitude" jdbcType="DOUBLE" />
-    <result column="longtitude" property="longtitude" jdbcType="DOUBLE" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, qr_code, latitude, longtitude
+    id, qr_code, latitude, longitude
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -22,9 +22,9 @@
   </delete>
   <insert id="insert" parameterType="my.suveng.veng_bike_server.pojo.Bike" >
     insert into bike (id, qr_code, latitude, 
-      longtitude)
+      longitude)
     values (#{id,jdbcType=INTEGER}, #{qrCode,jdbcType=VARCHAR}, #{latitude,jdbcType=DOUBLE}, 
-      #{longtitude,jdbcType=DOUBLE})
+      #{longitude,jdbcType=DOUBLE})
   </insert>
   <insert id="insertSelective" parameterType="my.suveng.veng_bike_server.pojo.Bike" >
     insert into bike
@@ -38,8 +38,8 @@
       <if test="latitude != null" >
         latitude,
       </if>
-      <if test="longtitude != null" >
-        longtitude,
+      <if test="longitude != null" >
+        longitude,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -52,8 +52,8 @@
       <if test="latitude != null" >
         #{latitude,jdbcType=DOUBLE},
       </if>
-      <if test="longtitude != null" >
-        #{longtitude,jdbcType=DOUBLE},
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DOUBLE},
       </if>
     </trim>
   </insert>
@@ -66,8 +66,8 @@
       <if test="latitude != null" >
         latitude = #{latitude,jdbcType=DOUBLE},
       </if>
-      <if test="longtitude != null" >
-        longtitude = #{longtitude,jdbcType=DOUBLE},
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=DOUBLE},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -76,7 +76,7 @@
     update bike
     set qr_code = #{qrCode,jdbcType=VARCHAR},
       latitude = #{latitude,jdbcType=DOUBLE},
-      longtitude = #{longtitude,jdbcType=DOUBLE}
+      longitude = #{longitude,jdbcType=DOUBLE}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
