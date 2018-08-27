@@ -6,9 +6,10 @@
     <result column="qr_code" property="qrCode" jdbcType="VARCHAR" />
     <result column="latitude" property="latitude" jdbcType="DOUBLE" />
     <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="status" property="status" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, qr_code, latitude, longitude
+    id, qr_code, latitude, longitude, status
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -22,9 +23,9 @@
   </delete>
   <insert id="insert" parameterType="my.suveng.veng_bike_server.pojo.Bike" >
     insert into bike (id, qr_code, latitude, 
-      longitude)
+      longitude, status)
     values (#{id,jdbcType=INTEGER}, #{qrCode,jdbcType=VARCHAR}, #{latitude,jdbcType=DOUBLE}, 
-      #{longitude,jdbcType=DOUBLE})
+      #{longitude,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="my.suveng.veng_bike_server.pojo.Bike" >
     insert into bike
@@ -41,6 +42,9 @@
       <if test="longitude != null" >
         longitude,
       </if>
+      <if test="status != null" >
+        status,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -54,6 +58,9 @@
       </if>
       <if test="longitude != null" >
         #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -69,6 +76,9 @@
       <if test="longitude != null" >
         longitude = #{longitude,jdbcType=DOUBLE},
       </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -76,7 +86,8 @@
     update bike
     set qr_code = #{qrCode,jdbcType=VARCHAR},
       latitude = #{latitude,jdbcType=DOUBLE},
-      longitude = #{longitude,jdbcType=DOUBLE}
+      longitude = #{longitude,jdbcType=DOUBLE},
+      status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
