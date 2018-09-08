@@ -1,12 +1,10 @@
 package my.suveng.veng_bike_server.controller;
 
+import io.swagger.annotations.Api;
 import my.suveng.veng_bike_server.pojo.Bike;
 import my.suveng.veng_bike_server.service.BikeService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -16,25 +14,26 @@ import java.util.List;
  * email  1344114844@qq.com
  * date   18-8-23 下午5:54
  */
+@Api(value="/bike", tags="bike接口模块")
 @Controller
 public class BikeController {
     @Resource
     BikeService bikeService;
 
-    @RequestMapping("/hello")
+    @GetMapping("/hello")
     @ResponseBody
     public String hello() {
         return "hello";
     }
 
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @ResponseBody
     public String save(@RequestBody Bike bike) {
         bikeService.save(bike);
         return "succ";
     }
 
-    @RequestMapping("/bikes")
+    @GetMapping("/bikes")
     @ResponseBody
     public List<Bike> bikes() {
         List<Bike> list=bikeService.findAll();
@@ -46,8 +45,5 @@ public class BikeController {
         return "bike/list";
     }
 
-    @ResponseBody
-    public List<Bike> bike_list(){
-        return bikeService.findAll();
-    }
+
 }

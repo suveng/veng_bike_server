@@ -6,7 +6,7 @@
     <groupId>my.suveng</groupId>
     <artifactId>veng_bike_server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>veng_bike_server</name>
     <description>veng_bike 服务端</description>
@@ -22,6 +22,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <swagger.version>2.7.0</swagger.version>
+
     </properties>
 
     <dependencies>
@@ -99,8 +101,20 @@
             <version>RELEASE</version>
         </dependency>
         <!--end-->
-    </dependencies>
+        <!-- Swagger -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
 
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <!--end-->
+    </dependencies>
 
 
     <build>
