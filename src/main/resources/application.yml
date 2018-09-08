@@ -20,3 +20,14 @@ spring:
     view:
       prefix: /pages/
       suffix: .html
+#redis
+  redis:
+    host: 192.168.0.201
+    port: 6379
+    password: root
+    jedis:
+      pool:
+        max-wait: 1ms
+        max-active: 8
+        max-idle: 8
+        min-idle: 0

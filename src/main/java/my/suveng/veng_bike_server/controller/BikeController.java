@@ -14,7 +14,7 @@ import java.util.List;
  * email  1344114844@qq.com
  * date   18-8-23 下午5:54
  */
-@Api(value="/bike", tags="bike接口模块")
+@Api(value="bike", tags="bike接口模块")
 @Controller
 public class BikeController {
     @Resource
