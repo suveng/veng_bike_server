@@ -2,14 +2,12 @@ package my.suveng.veng_bike_server.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import my.suveng.veng_bike_server.pojo.User;
 import my.suveng.veng_bike_server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -50,5 +48,42 @@ public class UserController {
             msg = "false";
         }
         return msg;
+    }
+    @PostMapping("/verify")
+    @ResponseBody
+    @ApiOperation(value = "验证用户信息")
+    public boolean verify(User user) {
+        boolean flag = userService.verify(user);
+        return flag;
+    }
+    @PostMapping("/reg")
+    @ResponseBody
+    @ApiOperation(value = "注册用户信息到mongo中")
+    public String register(@RequestBody String params) {
+        System.out.println(params);
+        //userService.register(params);
+        return "success";
+    }
+
+    @PostMapping("/deposit")
+    @ResponseBody
+    @ApiOperation(value = "充值")
+    public String deposit(User user) {
+        userService.deposit(user);
+        return "success";
+    }
+    @PostMapping("/identify")
+    @ResponseBody
+    @ApiOperation(value = "实名认证")
+    public String identify(User user) {
+        userService.identify(user);
+        return "success";
+    }
+    @GetMapping("/phoneNum/{openid}")
+    @ResponseBody
+    @ApiOperation(value = "根据openid拿到用户信息")
+    public User getPhoneNum(@PathVariable("openid") String openid) {
+        User user = userService.getUserByOpenid(openid);
+        return user;
     }
 }

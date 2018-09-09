@@ -25,7 +25,7 @@ public class IndustrySMS
 	/**
 	 * 验证码通知短信
 	 */
-	private void execute()
+	private String execute()
 	{
 		String tmpSmsContent = null;
 	    try{
@@ -40,15 +40,19 @@ public class IndustrySMS
 	    // 提交请求
 	    String result = HttpUtil.post(url, body);
 	    System.out.println("result:" + System.lineSeparator() + result);
+	    return result;
+
 	}
-	public void send(String phone,String code){
+	public String send(String phone,String code){
 		this.setTo(phone);
 		StringBuilder content=new StringBuilder();
 		content.append("【东软睿道】您的验证码为");
 		content.append(code);
 		content.append("，请于3分钟内正确输入，如非本人操作，请忽略此短信。");
 		this.setSmsContent(content.toString());
-		this.execute();
+		String result =this.execute();
+		return result;
+
 	}
 
 	public static String getOperation() {
