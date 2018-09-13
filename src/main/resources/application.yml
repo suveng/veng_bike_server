@@ -4,14 +4,14 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.0.200:3306/bike?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/bike?useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
 #mongodb
   data:
     mongodb:
       port: 27017
-      host: 192.168.0.201
+      host: 192.168.1.201
       username: bike
       password: bike
       database: bike
@@ -22,7 +22,7 @@ spring:
       suffix: .html
 #redis
   redis:
-    host: 192.168.0.201
+    host: 192.168.1.201
     port: 6379
     password: root
     jedis:
