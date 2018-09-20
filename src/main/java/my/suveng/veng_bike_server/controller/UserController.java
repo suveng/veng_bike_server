@@ -18,7 +18,7 @@ import java.net.UnknownHostException;
  * date   18-8-29 下午6:14
  */
 @Controller
-@Api(value = "User",tags = {"User"},description = "用户相关")
+@Api(value = "User",tags = {"User接口模块"},description = "用户相关")
 public class UserController {
     @Autowired
     UserService userService;
