@@ -83,7 +83,6 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "根据openid拿到用户信息")
     public User getPhoneNum(@PathVariable("openid") String openid) {
-        User user = userService.getUserByOpenid(openid);
-        return user;
+        return userService.getUserByOpenid(openid);
     }
 }
