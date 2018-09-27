@@ -40,8 +40,10 @@ public class BikeServiceImpl implements BikeService {
 
     @Override
     public GeoResults<Bike> findNear(double longitude, double latitude) {
+        //指定nearquery 相当于查询条件
         NearQuery nearQuery=NearQuery.near(new Point(longitude,latitude), Metrics.KILOMETERS);
        nearQuery.maxDistance(1).query(new Query().addCriteria(Criteria.where("status").is(0)).limit(20));
+       //通过mongo 的geohash算法的接口计算出来。
         GeoResults<Bike> geoResults = mongoTemplate.geoNear(nearQuery, Bike.class);
         return geoResults;
     }
