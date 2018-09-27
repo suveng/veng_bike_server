@@ -4,7 +4,13 @@ import my.suveng.veng_bike_server.dao.BikeMapper;
 import my.suveng.veng_bike_server.pojo.Bike;
 import my.suveng.veng_bike_server.service.BikeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,7 +25,7 @@ import java.util.List;
 public class BikeServiceImpl implements BikeService {
     @Resource
     BikeMapper bikeMapper;
-    @Autowired
+    @Resource
     MongoTemplate mongoTemplate;
 
     @Override
@@ -30,5 +36,13 @@ public class BikeServiceImpl implements BikeService {
     @Override
     public List<Bike> findAll() {
         return mongoTemplate.findAll(Bike.class, "bike");
+    }
+
+    @Override
+    public GeoResults<Bike> findNear(double longitude, double latitude) {
+        NearQuery nearQuery=NearQuery.near(new Point(longitude,latitude), Metrics.KILOMETERS);
+       nearQuery.maxDistance(1).query(new Query().addCriteria(Criteria.where("status").is(0)).limit(20));
+        GeoResults<Bike> geoResults = mongoTemplate.geoNear(nearQuery, Bike.class);
+        return geoResults;
     }
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import my.suveng.veng_bike_server.pojo.Bike;
 import my.suveng.veng_bike_server.service.BikeService;
+import org.springframework.data.geo.GeoResults;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,14 @@ public class BikeController {
         System.out.println(list);
         return list;
     }
+    @GetMapping("/bikes/near")
+    @ResponseBody
+    @ApiOperation(value = "查找附近单车")
+    public GeoResults<Bike> findNearBikes(double longitude, double latitude) {
+        GeoResults<Bike> near = bikeService.findNear(longitude, latitude);
+        return near;
+    }
+
     @GetMapping("/bike_list")
     @ApiOperation(value = "返回单车列表视图")
     public String to_bike_list(){
