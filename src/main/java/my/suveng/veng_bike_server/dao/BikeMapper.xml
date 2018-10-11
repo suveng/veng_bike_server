@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="my.suveng.veng_bike_server.dao.BikeMapper" >
-  <resultMap id="BaseResultMap" type="my.suveng.veng_bike_server.pojo.Bike" >
+  <resultMap id="BaseResultMap" type="my.suveng.veng_bike_server.pojo.mongo.Bike" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="qr_code" property="qrCode" jdbcType="VARCHAR" />
     <result column="latitude" property="latitude" jdbcType="DOUBLE" />
@@ -21,13 +21,13 @@
     delete from bike
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="my.suveng.veng_bike_server.pojo.Bike" >
+  <insert id="insert" parameterType="my.suveng.veng_bike_server.pojo.mongo.Bike" >
     insert into bike (id, qr_code, latitude, 
       longitude, status)
     values (#{id,jdbcType=INTEGER}, #{qrCode,jdbcType=VARCHAR}, #{latitude,jdbcType=DOUBLE}, 
       #{longitude,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="my.suveng.veng_bike_server.pojo.Bike" >
+  <insert id="insertSelective" parameterType="my.suveng.veng_bike_server.pojo.mongo.Bike" >
     insert into bike
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -64,7 +64,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="my.suveng.veng_bike_server.pojo.Bike" >
+  <update id="updateByPrimaryKeySelective" parameterType="my.suveng.veng_bike_server.pojo.mongo.Bike" >
     update bike
     <set >
       <if test="qrCode != null" >
@@ -82,7 +82,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="my.suveng.veng_bike_server.pojo.Bike" >
+  <update id="updateByPrimaryKey" parameterType="my.suveng.veng_bike_server.pojo.mongo.Bike" >
     update bike
     set qr_code = #{qrCode,jdbcType=VARCHAR},
       latitude = #{latitude,jdbcType=DOUBLE},

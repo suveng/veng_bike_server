@@ -2,10 +2,9 @@ package my.suveng.veng_bike_server.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import my.suveng.veng_bike_server.pojo.User;
+import my.suveng.veng_bike_server.pojo.mongo.User;
 import my.suveng.veng_bike_server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 

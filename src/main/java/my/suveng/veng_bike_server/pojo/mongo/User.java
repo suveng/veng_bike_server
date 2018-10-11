@@ -1,4 +1,4 @@
-package my.suveng.veng_bike_server.pojo;
+package my.suveng.veng_bike_server.pojo.mongo;
 
 
 

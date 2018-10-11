@@ -4,7 +4,7 @@ package my.suveng.veng_bike_server.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import my.suveng.veng_bike_server.REST.IndustrySMS;
-import my.suveng.veng_bike_server.pojo.User;
+import my.suveng.veng_bike_server.pojo.mongo.User;
 import my.suveng.veng_bike_server.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

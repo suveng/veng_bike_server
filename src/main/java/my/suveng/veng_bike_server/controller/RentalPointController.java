@@ -1,7 +1,7 @@
 package my.suveng.veng_bike_server.controller;
 
 import io.swagger.annotations.ApiOperation;
-import my.suveng.veng_bike_server.pojo.RentalPoint;
+import my.suveng.veng_bike_server.pojo.mongo.RentalPoint;
 import my.suveng.veng_bike_server.service.RentalPointService;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.web.bind.annotation.GetMapping;

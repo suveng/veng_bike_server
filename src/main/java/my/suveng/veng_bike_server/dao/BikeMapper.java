@@ -1,6 +1,6 @@
 package my.suveng.veng_bike_server.dao;
 
-import my.suveng.veng_bike_server.pojo.Bike;
+import my.suveng.veng_bike_server.pojo.mongo.Bike;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

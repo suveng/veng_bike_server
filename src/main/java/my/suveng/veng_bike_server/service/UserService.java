@@ -1,6 +1,6 @@
 package my.suveng.veng_bike_server.service;
 
-import my.suveng.veng_bike_server.pojo.User;
+import my.suveng.veng_bike_server.pojo.mongo.User;
 
 /**
  * author Veng Su

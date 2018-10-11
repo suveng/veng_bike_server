@@ -1,4 +1,4 @@
-package my.suveng.veng_bike_server.pojo;
+package my.suveng.veng_bike_server.pojo.mongo;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -6,16 +6,21 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * create at 2018/10/10
+ * author: suveng
+ * email: suveng@163.com
+ * 租赁点的实体类
+ **/
+@Document(collection = "RentalPoints")
 @Data
-@Document(collection = "bikes")
-public class Bike {
+public class RentalPoint {
     @Id
-    private String id;
-
-    private String qrCode;
+    private String point_id;
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private double[] location;
 
-    private Integer status=0;
+    private int left_bike;
+
 }

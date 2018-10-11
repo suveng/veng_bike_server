@@ -1,6 +1,6 @@
 package my.suveng.veng_bike_server.service;
 
-import my.suveng.veng_bike_server.pojo.Bike;
+import my.suveng.veng_bike_server.pojo.mongo.Bike;
 import org.springframework.data.geo.GeoResults;
 
 import java.util.List;
