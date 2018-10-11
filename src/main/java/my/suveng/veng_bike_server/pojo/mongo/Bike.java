@@ -18,4 +18,17 @@ public class Bike {
     private double[] location;
 
     private Integer status=0;
+
+    private String pointid;
+
+    public Bike() {
+    }
+
+    public Bike(String id, String qrCode, double[] location, Integer status, String pointid) {
+        this.id = id;
+        this.qrCode = qrCode;
+        this.location = location;
+        this.status = status;
+        this.pointid = pointid;
+    }
 }

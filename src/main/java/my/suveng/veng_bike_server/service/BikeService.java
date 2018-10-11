@@ -1,6 +1,7 @@
 package my.suveng.veng_bike_server.service;
 
 import my.suveng.veng_bike_server.pojo.mongo.Bike;
+import my.suveng.veng_bike_server.pojo.mysql.Vehicle;
 import org.springframework.data.geo.GeoResults;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface BikeService {
     List<Bike> findAll();
 
     GeoResults<Bike> findNear(double longitude, double latitude);
+
+    void saveInMysql(Vehicle vehicle);
 }

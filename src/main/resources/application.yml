@@ -31,3 +31,9 @@ spring:
         max-active: 8
         max-idle: 8
         min-idle: 0
+# MyBatis注解形式扫描实体类路径
+# MyBatis XML形式配置文件路径
+mybatis:
+  type-aliases-package: my.suveng.veng_bike_server.pojo.mysql
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:target/classes/my/suveng/veng_bike_server/dao/*.xml

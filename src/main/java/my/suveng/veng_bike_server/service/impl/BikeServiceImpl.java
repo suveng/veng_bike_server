@@ -1,7 +1,8 @@
 package my.suveng.veng_bike_server.service.impl;
 
-import my.suveng.veng_bike_server.dao.BikeMapper;
+import my.suveng.veng_bike_server.dao.mysql.VehicleMapper;
 import my.suveng.veng_bike_server.pojo.mongo.Bike;
+import my.suveng.veng_bike_server.pojo.mysql.Vehicle;
 import my.suveng.veng_bike_server.service.BikeService;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
@@ -22,10 +23,11 @@ import java.util.List;
  */
 @Service
 public class BikeServiceImpl implements BikeService {
-    @Resource
-    BikeMapper bikeMapper;
+
     @Resource
     MongoTemplate mongoTemplate;
+    @Resource
+    VehicleMapper vehicleMapper;
 
     @Override
     public void save(Bike bike) {
@@ -40,10 +42,15 @@ public class BikeServiceImpl implements BikeService {
     @Override
     public GeoResults<Bike> findNear(double longitude, double latitude) {
         //指定nearquery 相当于查询条件
-        NearQuery nearQuery=NearQuery.near(new Point(longitude,latitude), Metrics.KILOMETERS);
-       nearQuery.maxDistance(1).query(new Query().addCriteria(Criteria.where("status").is(0)).limit(20));
-       //通过mongo 的geohash算法的接口计算出来。
+        NearQuery nearQuery = NearQuery.near(new Point(longitude, latitude), Metrics.KILOMETERS);
+        nearQuery.maxDistance(1).query(new Query().addCriteria(Criteria.where("status").is(0)).limit(20));
+        //通过mongo 的geohash算法的接口计算出来。
         GeoResults<Bike> geoResults = mongoTemplate.geoNear(nearQuery, Bike.class);
         return geoResults;
+    }
+
+    @Override
+    public void saveInMysql(Vehicle vehicle) {
+        vehicleMapper.insert(vehicle);
     }
 }

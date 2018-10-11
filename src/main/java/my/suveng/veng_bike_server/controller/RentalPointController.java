@@ -1,7 +1,10 @@
 package my.suveng.veng_bike_server.controller;
 
 import io.swagger.annotations.ApiOperation;
+import my.suveng.veng_bike_server.pojo.mongo.Bike;
 import my.suveng.veng_bike_server.pojo.mongo.RentalPoint;
+import my.suveng.veng_bike_server.pojo.mysql.Vehicle;
+import my.suveng.veng_bike_server.service.BikeService;
 import my.suveng.veng_bike_server.service.RentalPointService;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.annotation.Resources;
 import java.util.List;
 
 /**
@@ -21,6 +25,8 @@ import java.util.List;
 public class RentalPointController {
     @Resource
     RentalPointService rentalPointService;
+    @Resource
+    BikeService bikeService;
 
     /**
      * 手动创建租车点
@@ -29,6 +35,7 @@ public class RentalPointController {
     @PostMapping("/rental/save")
     @ApiOperation(value = "手动创建租车点")
     public void save(@RequestBody RentalPoint rentalPoint){
+        rentalPoint.setLeft_bike(300);
         rentalPointService.save(rentalPoint);
     }
 
@@ -53,5 +60,22 @@ public class RentalPointController {
     public GeoResults<RentalPoint> findNearRentals(double longitude, double latitude) {
         GeoResults<RentalPoint> near = rentalPointService.findNear(longitude, latitude);
         return near;
+    }
+
+    @PostMapping("/rental/generate")
+    public void generateVehicle(){
+        int bikeNo=1000001;
+        List<RentalPoint> all = rentalPointService.findAll();
+        for (RentalPoint rentalPoint: all){
+            for (int i = 0; i < 300; i++) {
+                String No=String.valueOf(bikeNo);
+                double longitude=rentalPoint.getLocation()[0];
+                double latitude = rentalPoint.getLocation()[1];
+                String pointid=rentalPoint.getPoint_id();
+                bikeService.save(new Bike(No,No,rentalPoint.getLocation(),0,pointid));
+                bikeService.saveInMysql(new Vehicle(No,No,longitude,latitude,0,0,pointid));
+                bikeNo++;
+            }
+        }
     }
 }
