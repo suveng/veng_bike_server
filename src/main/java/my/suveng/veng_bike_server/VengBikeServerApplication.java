@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("my.suveng.veng_bike_server.dao.mysql")
+@MapperScan("my.suveng.veng_bike_server.*.dao.mysql")
 public class VengBikeServerApplication {
 
     public static void main(String[] args) {
