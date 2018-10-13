@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="my.suveng.veng_bike_server.rentalpoint.dao.mysql.RentalPointMapper" >
+  <resultMap id="BaseResultMap" type="my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint" >
+    <id column="pointId" property="pointid" jdbcType="VARCHAR" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="leftBike" property="leftbike" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pointId, longitude, latitude, leftBike
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from rentalpoint
+    where pointId = #{pointid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from rentalpoint
+    where pointId = #{pointid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint" >
+    insert into rentalpoint (pointId, longitude, latitude, 
+      leftBike)
+    values (#{pointid,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, 
+      #{leftbike,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint" >
+    insert into rentalpoint
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pointid != null" >
+        pointId,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="leftbike != null" >
+        leftBike,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pointid != null" >
+        #{pointid,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="leftbike != null" >
+        #{leftbike,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint" >
+    update rentalpoint
+    <set >
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="leftbike != null" >
+        leftBike = #{leftbike,jdbcType=INTEGER},
+      </if>
+    </set>
+    where pointId = #{pointid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint" >
+    update rentalpoint
+    set longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      leftBike = #{leftbike,jdbcType=INTEGER}
+    where pointId = #{pointid,jdbcType=VARCHAR}
+  </update>
+</mapper>

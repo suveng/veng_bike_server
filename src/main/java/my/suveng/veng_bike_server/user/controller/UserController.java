@@ -3,6 +3,7 @@ package my.suveng.veng_bike_server.user.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
+import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
 import my.suveng.veng_bike_server.user.service.UserService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
@@ -92,10 +93,14 @@ public class UserController {
     @PostMapping("/user/recharge")
     @ResponseBody
     @ApiOperation(value = "充值")
-    public String recharge(@RequestParam(value = "phoneNum",required = true) String phoneNum, @RequestParam(value = "charge",required = true) double charge){
+    public String recharge(@RequestParam(value = "phoneNum",required = true) String phoneNum, @RequestParam(value = "charge",required = true) double charge,
+                           @RequestParam(value = "province",required = false)String province,@RequestParam(value = "city",required = false) String city,
+                           @RequestParam(value = "district",required = false) String district
+    ){
+        RechargeRecord rechargeRecord=new RechargeRecord(charge,province,city,district);
         User user =new User();
         user.setPhoneNum(phoneNum);
-        userService.recharge(user,charge);
+        userService.recharge(user,charge,rechargeRecord);
         return "success";
     }
 }

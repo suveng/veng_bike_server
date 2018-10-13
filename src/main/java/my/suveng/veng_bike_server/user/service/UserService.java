@@ -1,6 +1,7 @@
 package my.suveng.veng_bike_server.user.service;
 
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
+import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
 
 /**
  * author Veng Su
@@ -18,5 +19,5 @@ public interface UserService {
 
     User getUserByOpenid(String openid);
 
-    void recharge(User user, double charge);
+    void recharge(User user, double charge, RechargeRecord rechargeRecord);
 }

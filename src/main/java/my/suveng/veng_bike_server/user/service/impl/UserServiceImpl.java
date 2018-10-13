@@ -4,8 +4,10 @@ package my.suveng.veng_bike_server.user.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import my.suveng.veng_bike_server.common.REST.IndustrySMS;
+import my.suveng.veng_bike_server.user.dao.mysql.RechargeRecordMapper;
 import my.suveng.veng_bike_server.user.dao.mysql.UserMapper;
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
+import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
 import my.suveng.veng_bike_server.user.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private IndustrySMS industrySMS;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private RechargeRecordMapper rechargeRecordMapper;
 
     @Override
     public void deposit(User user) {
@@ -98,13 +102,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void recharge(User user, double charge) {
+    public void recharge(User user, double charge, RechargeRecord rechargeRecord) {
 
         List<User> phoneNum = mongoTemplate.find(new Query(Criteria.where("phoneNum").is(user.getPhoneNum())), User.class);
         user = phoneNum.get(0);
         double new_balance = user.getBalance()+charge;
         user.setBalance(new_balance);
-
+        rechargeRecord.setUserid(user.getId());
         mongoTemplate.updateFirst(
                 new Query(Criteria.where("phoneNum").is(user.getPhoneNum())),
                 new Update().set("balance", user.getBalance()), User.class);
@@ -118,6 +122,7 @@ public class UserServiceImpl implements UserService {
         user1.setIdnum(user.getIdNum());
         user1.setPhonenum(user.getPhoneNum());
         userMapper.updateByPrimaryKey(user1);
+        rechargeRecordMapper.insertSelective(rechargeRecord);
     }
 
     @Override
