@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="my.suveng.veng_bike_server.vehicle.dao.mysql.RentalRecordMapper" >
+  <resultMap id="BaseResultMap" type="my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord" >
+    <id column="rentalId" property="rentalid" jdbcType="BIGINT" />
+    <result column="userId" property="userid" jdbcType="VARCHAR" />
+    <result column="vehicleId" property="vehicleid" jdbcType="VARCHAR" />
+    <result column="isFinish" property="isfinish" jdbcType="INTEGER" />
+    <result column="beginPoint" property="beginpoint" jdbcType="VARCHAR" />
+    <result column="endPoint" property="endpoint" jdbcType="VARCHAR" />
+    <result column="beginTime" property="begintime" jdbcType="TIMESTAMP" />
+    <result column="endTime" property="endtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    rentalId, userId, vehicleId, isFinish, beginPoint, endPoint, beginTime, endTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from rentalrecord
+    where rentalId = #{rentalid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from rentalrecord
+    where rentalId = #{rentalid,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord" >
+    insert into rentalrecord (rentalId, userId, vehicleId, 
+      isFinish, beginPoint, endPoint, 
+      beginTime, endTime)
+    values (#{rentalid,jdbcType=BIGINT}, #{userid,jdbcType=VARCHAR}, #{vehicleid,jdbcType=VARCHAR}, 
+      #{isfinish,jdbcType=INTEGER}, #{beginpoint,jdbcType=VARCHAR}, #{endpoint,jdbcType=VARCHAR}, 
+      #{begintime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord" >
+    insert into rentalrecord
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rentalid != null" >
+        rentalId,
+      </if>
+      <if test="userid != null" >
+        userId,
+      </if>
+      <if test="vehicleid != null" >
+        vehicleId,
+      </if>
+      <if test="isfinish != null" >
+        isFinish,
+      </if>
+      <if test="beginpoint != null" >
+        beginPoint,
+      </if>
+      <if test="endpoint != null" >
+        endPoint,
+      </if>
+      <if test="begintime != null" >
+        beginTime,
+      </if>
+      <if test="endtime != null" >
+        endTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rentalid != null" >
+        #{rentalid,jdbcType=BIGINT},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleid != null" >
+        #{vehicleid,jdbcType=VARCHAR},
+      </if>
+      <if test="isfinish != null" >
+        #{isfinish,jdbcType=INTEGER},
+      </if>
+      <if test="beginpoint != null" >
+        #{beginpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="endpoint != null" >
+        #{endpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="begintime != null" >
+        #{begintime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord" >
+    update rentalrecord
+    <set >
+      <if test="userid != null" >
+        userId = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleid != null" >
+        vehicleId = #{vehicleid,jdbcType=VARCHAR},
+      </if>
+      <if test="isfinish != null" >
+        isFinish = #{isfinish,jdbcType=INTEGER},
+      </if>
+      <if test="beginpoint != null" >
+        beginPoint = #{beginpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="endpoint != null" >
+        endPoint = #{endpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="begintime != null" >
+        beginTime = #{begintime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        endTime = #{endtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where rentalId = #{rentalid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord" >
+    update rentalrecord
+    set userId = #{userid,jdbcType=VARCHAR},
+      vehicleId = #{vehicleid,jdbcType=VARCHAR},
+      isFinish = #{isfinish,jdbcType=INTEGER},
+      beginPoint = #{beginpoint,jdbcType=VARCHAR},
+      endPoint = #{endpoint,jdbcType=VARCHAR},
+      beginTime = #{begintime,jdbcType=TIMESTAMP},
+      endTime = #{endtime,jdbcType=TIMESTAMP}
+    where rentalId = #{rentalid,jdbcType=BIGINT}
+  </update>
+</mapper>

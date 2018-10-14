@@ -7,10 +7,7 @@ import my.suveng.veng_bike_server.vehicle.pojo.mongo.Bike;
 import my.suveng.veng_bike_server.vehicle.service.BikeService;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -68,9 +65,19 @@ public class BikeController {
     @PostMapping("/vehicle/unlock")
     @ResponseBody
     @ApiOperation(value = "解锁车辆")
-    public String unlock(@RequestBody User user, @RequestBody Bike bike) {
-
-        return null;
+    public String unlock(@RequestParam(value = "bikeNo") String bikeNo,
+                         @RequestParam(value = "id") String id) {
+        try {
+            Bike bike=new Bike();
+            User user=new User();
+            bike.setId(bikeNo);
+            user.setId(id);
+            bikeService.unlock(user,bike);
+        }catch (Exception e){
+            e.printStackTrace();
+            return "fail";
+        }
+        return "success";
     }
 
     //TODO：还车业务：上锁功能 和 计费功能
@@ -78,8 +85,12 @@ public class BikeController {
     @ResponseBody
     @ApiOperation(value = "还车业务接口")
     public String lock(@RequestBody User user, @RequestBody Bike bike) {
-
-        return null;
+        try {
+            bikeService.lock(user,bike);
+        }catch (Exception e){
+            return "fail";
+        }
+        return "success";
     }
 
 }
