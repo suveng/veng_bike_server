@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
 import my.suveng.veng_bike_server.vehicle.pojo.mongo.Bike;
+import my.suveng.veng_bike_server.vehicle.pojo.mongo.RentalRecord;
 import my.suveng.veng_bike_server.vehicle.service.BikeService;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.stereotype.Controller;
@@ -61,7 +62,7 @@ public class BikeController {
         return "bike/list";
     }
 
-    //TODO::扫码开锁功能：根据传入的 用户id 和 车辆编号 修改车辆状态 创建订单
+
     @PostMapping("/vehicle/unlock")
     @ResponseBody
     @ApiOperation(value = "解锁车辆")
@@ -80,12 +81,15 @@ public class BikeController {
         return "success";
     }
 
-    //TODO：还车业务：上锁功能 和 计费功能
+    //TODO：还车业务：上锁功能 和 计费功能 更新MySQL单车状态， 租车记录状态  更新mongo的单车状态租车记录
     @PostMapping("/vehicle/lock")
     @ResponseBody
-    @ApiOperation(value = "还车业务接口")
-    public String lock(@RequestBody User user, @RequestBody Bike bike) {
+    @ApiOperation(value = "上锁功能和计费功能:更新单车状态，租车记录状态")
+    public String lock() {
         try {
+            RentalRecord rentalRecord=new RentalRecord();
+            User user=new User();
+            Bike bike=new Bike();
             bikeService.lock(user,bike);
         }catch (Exception e){
             return "fail";

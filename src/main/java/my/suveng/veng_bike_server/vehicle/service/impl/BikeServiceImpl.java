@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -85,6 +86,15 @@ public class BikeServiceImpl implements BikeService {
 
     @Override
     public void lock(User user, Bike bike) {
-
+        my.suveng.veng_bike_server.vehicle.pojo.mongo.RentalRecord rentalRecord=new my.suveng.veng_bike_server.vehicle.pojo.mongo.RentalRecord();
+        rentalRecord.setRentalId("fadfadqwefadfa");
+        ArrayList<double[]> doubles=new ArrayList<>();
+        doubles.add(new double[]{1,123});
+        doubles.add(new double[]{1,123});
+        doubles.add(new double[]{1,123});
+        doubles.add(new double[]{1,123});
+        doubles.add(new double[]{1,123});
+        rentalRecord.setLocations(doubles);
+        mongoTemplate.insert(rentalRecord);
     }
 }
