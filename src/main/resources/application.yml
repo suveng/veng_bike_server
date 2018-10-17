@@ -31,6 +31,9 @@ spring:
         max-active: 8
         max-idle: 8
         min-idle: 0
+  devtools:
+    restart:
+      additional-paths: src/main/java
 # MyBatis注解形式扫描实体类路径
 # MyBatis XML形式配置文件路径
 mybatis:
