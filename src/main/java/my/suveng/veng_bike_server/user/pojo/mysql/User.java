@@ -1,5 +1,8 @@
 package my.suveng.veng_bike_server.user.pojo.mysql;
 
+import lombok.Data;
+
+@Data
 public class User {
     private String userid;
 
