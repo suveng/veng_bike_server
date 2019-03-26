@@ -18,7 +18,7 @@ public class Vehicle {
     private String qrCode;
 
     /**
-     * 当前单车的经纬度
+     * 当前车辆的经纬度
      */
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private double[] location;

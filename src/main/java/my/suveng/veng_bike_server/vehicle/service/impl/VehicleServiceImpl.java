@@ -78,7 +78,7 @@ public class VehicleServiceImpl implements VehicleService {
         rentalRecord.setUserid(user.getId());
         rentalRecord.setVehicleid(bike.getId());
         rentalRecordMapper.insert(rentalRecord);
-        //        1. 修改单车状态
+        //        1. 修改车辆状态
         bike.setStatus(BikeStatus.RENTED.getStatus());
         mongoTemplate.updateFirst(new Query(Criteria.where("id").is(bike.getId())), new Update().set("status", bike.getStatus()), my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle.class);
     }
