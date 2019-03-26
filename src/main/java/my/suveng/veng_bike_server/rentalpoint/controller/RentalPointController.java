@@ -3,9 +3,8 @@ package my.suveng.veng_bike_server.rentalpoint.controller;
 import io.swagger.annotations.ApiOperation;
 import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPoint;
 import my.suveng.veng_bike_server.rentalpoint.service.RentalPointService;
-import my.suveng.veng_bike_server.vehicle.pojo.mongo.Bike;
 import my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle;
-import my.suveng.veng_bike_server.vehicle.service.BikeService;
+import my.suveng.veng_bike_server.vehicle.service.VehicleService;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +24,7 @@ public class RentalPointController {
     @Resource
     RentalPointService rentalPointService;
     @Resource
-    BikeService bikeService;
+    VehicleService bikeService;
 
     /**
      * 手动创建租车点
@@ -71,7 +70,7 @@ public class RentalPointController {
                 double longitude=rentalPoint.getLocation()[0];
                 double latitude = rentalPoint.getLocation()[1];
                 String pointid=rentalPoint.getPoint_id();
-                bikeService.save(new Bike(No,No,rentalPoint.getLocation(),0,pointid));
+                bikeService.save(new my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle(No,No,rentalPoint.getLocation(),0,pointid));
                 bikeService.saveInMysql(new Vehicle(No,No,longitude,latitude,0,0,pointid));
                 bikeNo++;
             }

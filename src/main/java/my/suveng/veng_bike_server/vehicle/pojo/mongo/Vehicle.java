@@ -7,24 +7,36 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "bikes")
-public class Bike {
+@Document(collection = "vehicles")
+public class Vehicle {
     @Id
     private String id;
 
+    /**
+     * 对应二维码
+     */
     private String qrCode;
 
+    /**
+     * 当前单车的经纬度
+     */
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private double[] location;
 
+    /**
+     * 租车的状态
+     */
     private Integer status=0;
 
+    /**
+     * 归属的租车点
+     */
     private String pointid;
 
-    public Bike() {
+    public Vehicle() {
     }
 
-    public Bike(String id, String qrCode, double[] location, Integer status, String pointid) {
+    public Vehicle(String id, String qrCode, double[] location, Integer status, String pointid) {
         this.id = id;
         this.qrCode = qrCode;
         this.location = location;

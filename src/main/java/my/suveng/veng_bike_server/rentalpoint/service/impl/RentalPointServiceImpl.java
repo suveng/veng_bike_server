@@ -1,5 +1,7 @@
 package my.suveng.veng_bike_server.rentalpoint.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import my.suveng.veng_bike_server.rentalpoint.dao.mysql.RentalPointMapper;
 import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPoint;
 import my.suveng.veng_bike_server.rentalpoint.service.RentalPointService;
 import org.springframework.data.geo.GeoResults;
@@ -19,9 +21,12 @@ import java.util.List;
  * email: suveng@163.com
  **/
 @Service
+@Slf4j
 public class RentalPointServiceImpl implements RentalPointService {
     @Resource
-    MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
+    @Resource
+    private RentalPointMapper rentalPointMapper;
 
     /**
      * 手动创建租车点
@@ -29,6 +34,10 @@ public class RentalPointServiceImpl implements RentalPointService {
      */
     @Override
     public void save(RentalPoint rentalPoint) {
+        my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint rentalPoint1=rentalPoint.toMySQL(rentalPoint);
+        if (rentalPointMapper.insertSelective(rentalPoint1)<1){
+            log.error("租赁点插入失败");
+        }
         mongoTemplate.insert(rentalPoint);
     }
 
@@ -45,7 +54,7 @@ public class RentalPointServiceImpl implements RentalPointService {
      * 查询附近10公里内的租车点
      * @param longitude 经度
      * @param latitude 纬度
-     * @return
+     * @return GeoResults<RentalPoint>
      */
     @Override
     public GeoResults<RentalPoint> findNear(double longitude, double latitude) {

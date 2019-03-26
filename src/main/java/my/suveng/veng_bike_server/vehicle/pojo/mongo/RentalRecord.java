@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * create at 2018/10/14
  * author: suveng
  * email: suveng@163.com
+ * description: 轨迹记录
  **/
 
 @Document(collection = "rentalrecords")

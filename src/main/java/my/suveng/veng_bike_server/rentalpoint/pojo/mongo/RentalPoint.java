@@ -23,4 +23,13 @@ public class RentalPoint {
 
     private int left_bike;
 
+    public my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint toMySQL(RentalPoint rentalPoint) {
+        my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint myRentalPoint =new my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint();
+        myRentalPoint.setPointid(rentalPoint.getPoint_id());
+        double[] location = rentalPoint.getLocation();
+        myRentalPoint.setLongitude(location[0]);
+        myRentalPoint.setLatitude(location[1]);
+        myRentalPoint.setLeftbike(rentalPoint.getLeft_bike());
+        return myRentalPoint;
+    }
 }
