@@ -51,7 +51,7 @@ public class VehicleServiceImpl implements VehicleService {
     public GeoResults<my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle> findNear(double longitude, double latitude) {
         //指定nearquery 相当于查询条件
         NearQuery nearQuery = NearQuery.near(new Point(longitude, latitude), Metrics.KILOMETERS);
-        nearQuery.maxDistance(1).query(new Query().addCriteria(Criteria.where("status").is(0)).limit(20));
+        nearQuery.maxDistance(0.01).query(new Query().addCriteria(Criteria.where("status").is(0)).limit(20));
         //通过mongo 的geohash算法的接口计算出来。
         return mongoTemplate.geoNear(nearQuery, my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle.class);
     }

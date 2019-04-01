@@ -56,8 +56,7 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "验证用户信息")
     public boolean verify(User user) {
-        boolean verify = userService.verify(user);
-        return verify;
+        return userService.verify(user);
     }
     @PostMapping("/reg")
     @ResponseBody
@@ -79,15 +78,16 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "实名认证")
     public String identify(User user) {
-        userService.identify(user);
-        return "success";
+        if (userService.identify(user)) {
+            return "success";
+        }
+        return "fail";
     }
     @GetMapping("/phoneNum/{openid}")
     @ResponseBody
     @ApiOperation(value = "根据openid拿到用户信息")
     public User getPhoneNum(@PathVariable("openid") String openid) {
-        User userByOpenid = userService.getUserByOpenid(openid);
-        return userByOpenid;
+        return userService.getUserByOpenid(openid);
     }
 
     @PostMapping("/user/recharge")
