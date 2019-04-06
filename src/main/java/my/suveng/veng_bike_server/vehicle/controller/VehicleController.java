@@ -2,10 +2,13 @@ package my.suveng.veng_bike_server.vehicle.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPoint;
+import my.suveng.veng_bike_server.rentalpoint.service.RentalPointService;
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
 import my.suveng.veng_bike_server.vehicle.pojo.mongo.RentalRecord;
 import my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle;
 import my.suveng.veng_bike_server.vehicle.service.VehicleService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * author Veng Su
@@ -26,6 +30,8 @@ import java.util.List;
 public class VehicleController {
     @Resource
     private VehicleService vehicleService;
+    @Resource
+    private RentalPointService rentalPointService;
 
     @GetMapping("/hello")
     @ResponseBody
@@ -35,6 +41,33 @@ public class VehicleController {
     }
 
 
+    @GetMapping("/addTestData")
+    @ResponseBody
+    @ApiOperation(value = "添加测试数据")
+    public String addTestData() {
+        List<RentalPoint> all = rentalPointService.findAll();
+        if (!ObjectUtils.allNotNull(all)){
+            return "success";
+        }
+        for (RentalPoint rentalPoint: all){
+            for (int i = 0; i < 300; i++) {
+                my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle vehicle = new my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle();
+                Vehicle mongoVe = new Vehicle();
+                String id = UUID.randomUUID().toString().toLowerCase();
+                mongoVe.setId(id);
+                vehicle.setVehicleid(id);
+                vehicle.setQrcode(id);
+                mongoVe.setQrCode(id);
+                double[] location = rentalPoint.getLocation();
+                mongoVe.setLocation(location);
+                vehicle.setLongitude(location[0]);
+                vehicle.setLatitude(location[1]);
+                vehicleService.save(mongoVe);
+                vehicleService.saveInMysql(vehicle);
+            }
+        }
+        return "success";
+    }
     @GetMapping("/vehicles")
     @ResponseBody
     @ApiOperation(value = "查找全部车辆")

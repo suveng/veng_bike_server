@@ -77,57 +77,63 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void genVerifyCode(String nationCode, String phoneNum) throws Exception {
-
+        //todo://接口恢复
         //普通单发
-        String code = (int) ((Math.random() * 9 + 1) * 1000) + "";
-        if (nationCode.equals("86")) {
-            String res = industrySMS.send(phoneNum, code);
-            JSONObject jres = JSON.parseObject(res);
-            String respcode = jres.getString("respCode");
-            String resdesc = jres.getString("respDesc");
-            if (!respcode.equals("00000")) {
-                log.error("发送验证码失败:  " + resdesc);
-                throw new InvalidParameterException("发送验证码失败");
-            }
-        } else {
-            Exception e = new InvalidParameterException("不支持国外手机号码");
-            log.error(e.getMessage());
-            throw e;
-        }
+        //String code = (int) ((Math.random() * 9 + 1) * 1000) + "";
+        //if (nationCode.equals("86")) {
+        //    String res = industrySMS.send(phoneNum, code);
+        //    JSONObject jres = JSON.parseObject(res);
+        //    String respcode = jres.getString("respCode");
+        //    String resdesc = jres.getString("respDesc");
+        //    if (!respcode.equals("00000")) {
+        //        log.error("发送验证码失败:  " + resdesc);
+        //        throw new InvalidParameterException("发送验证码失败");
+        //    }
+        //} else {
+        //    Exception e = new InvalidParameterException("不支持国外手机号码");
+        //    log.error(e.getMessage());
+        //    throw e;
+        //}
         //将数据保存到redis中，redis的key手机号，value是验证码，有效时长120秒
-        stringRedisTemplate.opsForValue().set(phoneNum, code, 120, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set(phoneNum, "1234", 120, TimeUnit.SECONDS);
     }
 
     /**
      * 阿里云提供的实名认证接口
      */
     private static boolean idenAuthentication(String idNo, String name) {
-        String host = "https://idenauthen.market.alicloudapi.com";
-        String path = "/idenAuthentication";
-        String method = "POST";
-        String appcode = "5bb7b38ac53643c995fe48fdc8ee148f";
-        Map<String, String> headers = new HashMap<String, String>();
-        //最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
-        headers.put("Authorization", "APPCODE " + appcode);
-        //根据API的要求，定义相对应的Content-Type
-        headers.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        Map<String, String> querys = new HashMap<String, String>();
-        Map<String, String> bodys = new HashMap<String, String>();
-        bodys.put("idNo", idNo);
-        bodys.put("name", name);
-        try {
-            HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
-            PeopleIdDto peopleIdDto = JSON.parseObject(EntityUtils.toString(response.getEntity()), PeopleIdDto.class);
-            if (!ObjectUtils.allNotNull(peopleIdDto)) {
-                throw new IllegalArgumentException("返回结果异常");
-            }
-            return peopleIdDto.getRespCode().equals("0000");
-        } catch (Exception e) {
-            log.error("调用接口失败，记录为：{idNo:【{}】,name:【{}】}", idNo, name);
-            return false;
-        }
+        //todo://接口恢复
+        return true;
+        //String host = "https://idenauthen.market.alicloudapi.com";
+        //String path = "/idenAuthentication";
+        //String method = "POST";
+        //String appcode = "5bb7b38ac53643c995fe48fdc8ee148f";
+        //Map<String, String> headers = new HashMap<String, String>();
+        ////最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+        //headers.put("Authorization", "APPCODE " + appcode);
+        ////根据API的要求，定义相对应的Content-Type
+        //headers.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        //Map<String, String> querys = new HashMap<String, String>();
+        //Map<String, String> bodys = new HashMap<String, String>();
+        //bodys.put("idNo", idNo);
+        //bodys.put("name", name);
+        //try {
+        //    HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
+        //    PeopleIdDto peopleIdDto = JSON.parseObject(EntityUtils.toString(response.getEntity()), PeopleIdDto.class);
+        //    if (!ObjectUtils.allNotNull(peopleIdDto)) {
+        //        throw new IllegalArgumentException("返回结果异常");
+        //    }
+        //    return peopleIdDto.getRespCode().equals("0000");
+        //} catch (Exception e) {
+        //    log.error("调用接口失败，记录为：{idNo:【{}】,name:【{}】}", idNo, name);
+        //    return false;
+        //}
     }
 
+    /**
+     * 实名认证接口
+     * @param user 用户信息
+     */
     @Override
     public boolean identify(User user) {
         //参数校验
@@ -153,8 +159,9 @@ public class UserServiceImpl implements UserService {
                 user2.setPhonenum(user1.getPhoneNum());
                 userMapper.insertSelective(user2);
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override

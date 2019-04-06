@@ -58,7 +58,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public void saveInMysql(Vehicle vehicle) {
-        vehicleMapper.insert(vehicle);
+        vehicleMapper.insertSelective(vehicle);
     }
 
     @Override

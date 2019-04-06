@@ -54,7 +54,7 @@ public class RentalPointController {
      * @return 附近10公里的租车点
      */
     @GetMapping("/rental/findNearRentals")
-    @ApiOperation(value = "附近10公里的租车点")
+    @ApiOperation(value = "附近1公里的租车点")
     public GeoResults<RentalPoint> findNearRentals(double longitude, double latitude) {
         GeoResults<RentalPoint> near = rentalPointService.findNear(longitude, latitude);
         return near;
