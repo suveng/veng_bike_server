@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public class RentalPoint {
     @Id
-    private String point_id;
+    private String id;
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private double[] location;
@@ -25,7 +25,7 @@ public class RentalPoint {
 
     public my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint toMySQL(RentalPoint rentalPoint) {
         my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint myRentalPoint =new my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint();
-        myRentalPoint.setPointid(rentalPoint.getPoint_id());
+        myRentalPoint.setPointid(rentalPoint.getId());
         double[] location = rentalPoint.getLocation();
         myRentalPoint.setLongitude(location[0]);
         myRentalPoint.setLatitude(location[1]);

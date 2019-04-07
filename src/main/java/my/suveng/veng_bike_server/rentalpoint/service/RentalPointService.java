@@ -15,5 +15,5 @@ public interface RentalPointService {
 
     List<RentalPoint> findAll();
 
-    GeoResults<RentalPoint> findNear(double longitude, double latitude);
+    GeoResults<RentalPoint> findNear(Double longitude, Double latitude);
 }

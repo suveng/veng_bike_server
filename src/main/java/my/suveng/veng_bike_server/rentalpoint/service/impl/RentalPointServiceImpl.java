@@ -57,7 +57,7 @@ public class RentalPointServiceImpl implements RentalPointService {
      * @return GeoResults<RentalPoint>
      */
     @Override
-    public GeoResults<RentalPoint> findNear(double longitude, double latitude) {
+    public GeoResults<RentalPoint> findNear(Double longitude, Double latitude) {
         //指定nearquery 相当于查询条件
         NearQuery nearQuery=NearQuery.near(new Point(longitude,latitude), Metrics.KILOMETERS);
         //查找附近1公里内的租车点

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * create at 2018/10/10
@@ -33,6 +34,7 @@ public class RentalPointController {
     @PostMapping("/rental/save")
     @ApiOperation(value = "手动创建租车点")
     public void save(@RequestBody RentalPoint rentalPoint){
+        rentalPoint.setId(UUID.randomUUID().toString().toLowerCase().replace("-", ""));
         rentalPoint.setLeft_bike(300);
         rentalPointService.save(rentalPoint);
     }
@@ -69,7 +71,7 @@ public class RentalPointController {
                 String No=String.valueOf(bikeNo);
                 double longitude=rentalPoint.getLocation()[0];
                 double latitude = rentalPoint.getLocation()[1];
-                String pointid=rentalPoint.getPoint_id();
+                String pointid=rentalPoint.getId();
                 bikeService.save(new my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle(No,No,rentalPoint.getLocation(),0,pointid));
                 bikeService.saveInMysql(new Vehicle(No,No,longitude,latitude,0,0,pointid));
                 bikeNo++;

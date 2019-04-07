@@ -43,4 +43,15 @@ public class Vehicle {
         this.status = status;
         this.pointid = pointid;
     }
+
+    public my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle toMySQL() {
+        my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle vehicle = new my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle();
+        vehicle.setPointid(this.getPointid());
+        vehicle.setLongitude(this.getLocation()[0]);
+        vehicle.setLatitude(this.getLocation()[1]);
+        vehicle.setQrcode(this.getQrCode());
+        vehicle.setVehicleid(this.getId());
+        vehicle.setType(0);
+        return vehicle;
+    }
 }

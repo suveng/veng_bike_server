@@ -18,9 +18,12 @@ public interface VehicleService {
 
     GeoResults<Vehicle> findNear(double longitude, double latitude);
 
-    void saveInMysql(my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle vehicle);
+    boolean saveInMysql(my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle vehicle);
 
-    void unlock(User user, Vehicle vehicle);
+    boolean unlock(User user, Vehicle vehicle);
 
     void lock(User user, Vehicle vehicle);
+
+    boolean updateMysql(my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle toMySQL);
+
 }
