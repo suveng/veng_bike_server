@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-03-26 11:09:29
+Date: 2019-04-08 00:09:28
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -28,7 +28,7 @@ CREATE TABLE `rechargerecord` (
   `city` varchar(255) NOT NULL DEFAULT '',
   `district` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`rechareId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for rentalpoint
@@ -36,8 +36,8 @@ CREATE TABLE `rechargerecord` (
 DROP TABLE IF EXISTS `rentalpoint`;
 CREATE TABLE `rentalpoint` (
   `pointId` varchar(255) NOT NULL,
-  `longitude` double(255,0) NOT NULL DEFAULT '0',
-  `latitude` double(255,0) NOT NULL DEFAULT '0',
+  `longitude` double(255,6) NOT NULL DEFAULT '0.000000',
+  `latitude` double(255,6) NOT NULL DEFAULT '0.000000',
   `leftBike` int(255) NOT NULL DEFAULT '0',
   PRIMARY KEY (`pointId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -56,18 +56,18 @@ CREATE TABLE `rentalrecord` (
   `beginTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `endTime` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`rentalId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `userId` varchar(255) NOT NULL,
-  `status` int(255) NOT NULL DEFAULT '0',
-  `phoneNum` varchar(255) NOT NULL DEFAULT '0',
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `idNum` varchar(255) NOT NULL DEFAULT '',
+  `userId` varchar(128) NOT NULL,
+  `status` int(2) NOT NULL DEFAULT '0',
+  `phoneNum` varchar(15) NOT NULL DEFAULT '0',
+  `name` varchar(12) NOT NULL DEFAULT '',
+  `idNum` varchar(25) NOT NULL DEFAULT '',
   `deposit` double(255,0) NOT NULL DEFAULT '0',
   `balance` double(255,0) NOT NULL DEFAULT '0',
   PRIMARY KEY (`userId`)
@@ -80,8 +80,8 @@ DROP TABLE IF EXISTS `vehicle`;
 CREATE TABLE `vehicle` (
   `vehicleId` varchar(255) NOT NULL,
   `qrCode` varchar(255) NOT NULL DEFAULT '',
-  `longitude` double(255,0) NOT NULL DEFAULT '0',
-  `latitude` double(255,0) NOT NULL DEFAULT '0',
+  `longitude` double(255,6) NOT NULL DEFAULT '0.000000',
+  `latitude` double(255,6) NOT NULL DEFAULT '0.000000',
   `status` int(255) NOT NULL DEFAULT '0',
   `type` int(255) NOT NULL DEFAULT '0',
   `pointId` varchar(255) NOT NULL DEFAULT '',
