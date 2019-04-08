@@ -14,7 +14,6 @@ import my.suveng.veng_bike_server.vehicle.service.VehicleService;
 import my.suveng.veng_bike_server.vehicle.vo.BikeStatus;
 import my.suveng.veng_bike_server.vehicle.vo.RntalRecordFlag;
 import org.apache.commons.lang3.ObjectUtils;
-import org.bson.types.ObjectId;
 import org.joda.time.LocalDateTime;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
@@ -70,7 +69,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public boolean saveInMysql(Vehicle vehicle) {
-        return vehicleMapper.insertSelective(vehicle)>=1;
+        return vehicleMapper.insertSelective(vehicle) >= 1;
     }
 
     @Override
@@ -78,15 +77,28 @@ public class VehicleServiceImpl implements VehicleService {
         //检查
         bike = mongoTemplate.findById(bike.getId(), my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle.class);
         user = mongoTemplate.findById(user.getId(), User.class);
-        if (!ObjectUtils.allNotNull(user,bike,bike.getPointid())) {
-            return false;
-        }
-        RentalPoint rentalPoint = mongoTemplate.findById(bike.getPointid(), RentalPoint.class);
-        if (!ObjectUtils.allNotNull(rentalPoint)){
+        if (!ObjectUtils.allNotNull(user, bike, bike.getPointid())) {
             return false;
         }
         //检查是否是预留车
-        if (bike.getStatus()!=0){
+        RentalPoint rentalPoint = mongoTemplate.findById(bike.getPointid(), RentalPoint.class);
+        if (!ObjectUtils.allNotNull(rentalPoint)) {
+            return false;
+        }
+        List<RentalRecord> rentalRecords = rentalRecordMapper.selectByUserId(user.getId(), 0);
+        if (!CollectionUtils.isEmpty(rentalRecords)) {
+            if (rentalRecords.size() > 1) {
+                return false;
+            }
+            if (rentalRecords.size() == 1) {
+                RentalRecord rentalRecord1 = rentalRecords.get(0);
+                if (rentalRecord1.getVehicleid().equals(bike.getId())) {
+                    return true;
+                }
+            }
+        }
+        //检查车辆状态
+        if (bike.getStatus() != 0) {
             return false;
         }
         //检查用户满足条件
@@ -94,15 +106,7 @@ public class VehicleServiceImpl implements VehicleService {
         if (user.getBalance() < 0 || user.getDeposit() < 100) {
             return false;
         }
-        List<RentalRecord> rentalRecords = rentalRecordMapper.selectByUserId(user.getId(), 0);
-        if (!CollectionUtils.isEmpty(rentalRecords)){
-            return false;
-        }else {
-            RentalRecord rentalRecord1 = rentalRecords.get(0);
-            if (rentalRecord1.getVehicleid().equals(bike.getId())) {
-                return true;
-            }
-        }
+
         //创建租赁记录
         RentalRecord rentalRecord = new RentalRecord();
         rentalRecord.setIsfinish(RntalRecordFlag.BEGIN.getStatus());
@@ -143,6 +147,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public boolean updateMysql(Vehicle toMySQL) {
-        return vehicleMapper.updateByPrimaryKeySelective(toMySQL)>=1;
+        return vehicleMapper.updateByPrimaryKeySelective(toMySQL) >= 1;
     }
 }

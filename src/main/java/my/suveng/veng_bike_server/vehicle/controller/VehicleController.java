@@ -7,6 +7,7 @@ import my.suveng.veng_bike_server.common.response.ResultBuilder;
 import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPoint;
 import my.suveng.veng_bike_server.rentalpoint.service.RentalPointService;
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
+import my.suveng.veng_bike_server.user.service.UserService;
 import my.suveng.veng_bike_server.vehicle.dao.mysql.RentalRecordMapper;
 import my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle;
 import my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord;
@@ -14,7 +15,6 @@ import my.suveng.veng_bike_server.vehicle.service.VehicleService;
 import my.suveng.veng_bike_server.vehicle.vo.RntalRecordFlag;
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
@@ -46,12 +46,14 @@ import java.util.UUID;
 public class VehicleController {
     @Resource
     private VehicleService vehicleService;
-    @Autowired
-    RentalPointService rentalPointService;
+    @Resource
+    private RentalPointService rentalPointService;
     @Resource
     private MongoTemplate mongoTemplate;
     @Resource
     private RentalRecordMapper rentalRecordMapper;
+    @Resource
+    private UserService userService;
 
     @GetMapping("/hello")
     @ResponseBody
@@ -105,8 +107,7 @@ public class VehicleController {
     @ResponseBody
     @ApiOperation(value = "查找附近车辆")
     public GeoResults<Vehicle> findNearVehicles(double longitude, double latitude) {
-        GeoResults<Vehicle> near = vehicleService.findNear(longitude, latitude);
-        return near;
+        return vehicleService.findNear(longitude, latitude);
     }
 
     @RequestMapping("/vehicle_list")
@@ -123,7 +124,13 @@ public class VehicleController {
         if (!ObjectUtils.allNotNull(latitude, longitude, userId)) {
             return ResultBuilder.buildSimpleErrorResult();
         }
+        //只能预约一辆
+        if (!userService.checkRentalRecord(userId)) {
+            return ResultBuilder.buildSimpleErrorResult();
+        }
+
         System.out.println(latitude + "-" + longitude + "-" + userId);
+
         GeoResults<RentalPoint> near = null;
         Double lo = Double.valueOf(longitude);
         Double la = Double.valueOf(latitude);

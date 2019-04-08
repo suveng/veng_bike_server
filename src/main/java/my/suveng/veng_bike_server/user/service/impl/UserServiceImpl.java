@@ -1,32 +1,26 @@
 package my.suveng.veng_bike_server.user.service.impl;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import my.suveng.veng_bike_server.common.REST.IndustrySMS;
-import my.suveng.veng_bike_server.user.controller.HttpUtils;
 import my.suveng.veng_bike_server.user.dao.mysql.RechargeRecordMapper;
 import my.suveng.veng_bike_server.user.dao.mysql.UserMapper;
-import my.suveng.veng_bike_server.user.dto.PeopleIdDto;
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
 import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
 import my.suveng.veng_bike_server.user.service.UserService;
+import my.suveng.veng_bike_server.vehicle.dao.mysql.RentalRecordMapper;
+import my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.security.InvalidParameterException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Resource
     private RechargeRecordMapper rechargeRecordMapper;
+    @Resource
+    private RentalRecordMapper rentalRecordMapper;
 
     @Override
     public void deposit(User user) {
@@ -132,6 +128,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 实名认证接口
+     *
      * @param user 用户信息
      */
     @Override
@@ -191,6 +188,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByOpenid(String openid) {
         return mongoTemplate.findById(openid, User.class);
+    }
+
+    @Override
+    public boolean checkRentalRecord(String userId) {
+        List<RentalRecord> rentalRecords = rentalRecordMapper.selectByUserId(userId, 0);
+        if (!CollectionUtils.isEmpty(rentalRecords) && rentalRecords.size() > 0) {
+            return false;
+        }
+        return rentalRecords.size() == 0;
     }
 }
 

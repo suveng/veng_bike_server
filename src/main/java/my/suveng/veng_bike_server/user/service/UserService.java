@@ -35,4 +35,6 @@ public interface UserService {
     User getUserByOpenid(String openid);
 
     void recharge(User user, double charge, RechargeRecord rechargeRecord);
+
+    boolean checkRentalRecord(String userId);
 }
