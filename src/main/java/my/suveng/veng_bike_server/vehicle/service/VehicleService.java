@@ -2,9 +2,11 @@ package my.suveng.veng_bike_server.vehicle.service;
 
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
 import my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.geo.GeoResults;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * author Veng Su
@@ -22,7 +24,7 @@ public interface VehicleService {
 
     boolean unlock(User user, Vehicle vehicle);
 
-    void lock(User user, Vehicle vehicle);
+    Map lock(String userId, Double lo, Double la);
 
     boolean updateMysql(my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle toMySQL);
 

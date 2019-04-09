@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import my.suveng.veng_bike_server.common.response.Result;
 import my.suveng.veng_bike_server.common.response.ResultBuilder;
+import my.suveng.veng_bike_server.common.response.ResultEnums;
 import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPoint;
 import my.suveng.veng_bike_server.rentalpoint.service.RentalPointService;
 import my.suveng.veng_bike_server.user.pojo.mongo.User;
@@ -14,6 +15,7 @@ import my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord;
 import my.suveng.veng_bike_server.vehicle.service.VehicleService;
 import my.suveng.veng_bike_server.vehicle.vo.RntalRecordFlag;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
@@ -25,6 +27,7 @@ import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +36,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
+import java.io.Console;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -72,7 +77,7 @@ public class VehicleController {
             return "success";
         }
         for (RentalPoint rentalPoint : all) {
-            for (int i = 0; i < 300; i++) {
+            for (int i = 0; i < 30; i++) {
                 my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle vehicle = new my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle();
                 Vehicle mongoVe = new Vehicle();
                 String id = UUID.randomUUID().toString().toLowerCase();
@@ -119,7 +124,7 @@ public class VehicleController {
     @RequestMapping("/vehicle/reservate")
     @ApiOperation(value = "预约租车")
     @ResponseBody
-    @Transient
+    @Transactional
     public Result reservate(String longitude, String latitude, String userId) {
         if (!ObjectUtils.allNotNull(latitude, longitude, userId)) {
             return ResultBuilder.buildSimpleErrorResult();
@@ -147,6 +152,7 @@ public class VehicleController {
         }
         Vehicle vehicle = vehicles.get(0);
         vehicle.setStatus(2);
+        System.out.println(vehicle.getId());
         if (mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(vehicle.getId())), Update.update("status", vehicle.getStatus()), Vehicle.class).getModifiedCount() < 1) {
             throw new RuntimeException("更新mongo车辆状态失败！");
         }
@@ -166,8 +172,6 @@ public class VehicleController {
         if (mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPoint.getId())), new Update().set("left_bike", rentalPoint.getLeft_bike()), RentalPoint.class).getModifiedCount() < 1) {
             throw new RuntimeException("更新mongo租赁点失败！");
         }
-
-
         return ResultBuilder.buildSimpleSuccessResult();
     }
 
@@ -191,19 +195,22 @@ public class VehicleController {
         return "success";
     }
 
-    //TODO：还车业务：上锁功能 和 计费功能 更新MySQL车辆状态， 租车记录状态  更新mongo的车辆状态租车记录
-    @PostMapping("/vehicle/lock")
+    @RequestMapping("/vehicle/lock")
     @ResponseBody
     @ApiOperation(value = "上锁功能和计费功能:更新车辆状态，租车记录状态")
-    public String lock() {
-        try {
-            User user = new User();
-            Vehicle vehicle = new Vehicle();
-            vehicleService.lock(user, vehicle);
-        } catch (Exception e) {
-            return "fail";
+    public Result lock(String userId,String longitude,String latitude) {
+        if (StringUtils.isBlank(userId)){
+            return ResultBuilder.buildSimpleIllegalArgumentError();
         }
-        return "success";
+        try {
+            Map lock = vehicleService.lock(userId, Double.valueOf(longitude), Double.valueOf(latitude));
+            if (ObjectUtils.allNotNull(lock)){
+                return ResultBuilder.build(ResultEnums.SIMPLE_SUCCESS,lock);
+            }
+        } catch (Exception e) {
+            return ResultBuilder.buildSimpleErrorResult();
+        }
+        return ResultBuilder.buildSimpleIllegalArgumentError();
     }
 
 }
