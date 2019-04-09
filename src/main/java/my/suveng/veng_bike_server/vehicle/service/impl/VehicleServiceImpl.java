@@ -100,6 +100,8 @@ public class VehicleServiceImpl implements VehicleService {
                 if (rentalRecord1.getVehicleid().equals(bike.getId())) {
                     mongoTemplate.updateFirst(new Query(Criteria.where("id").is(bike.getId())), new Update().set("status", 1), my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle.class);
                     return true;
+                }else{
+                    return false;
                 }
             }
         }
@@ -197,7 +199,7 @@ public class VehicleServiceImpl implements VehicleService {
         //更新租赁点信息
         mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPoint.getId())), Update.update("left_bike", rentalPoint.getLeft_bike()), rentalPoint.getClass());
         //更新车辆信息
-        mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(ve.getId())), Update.update("status", 0).set("location", rentalPoint.getLocation()), my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle.class);
+        mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(ve.getId())), Update.update("status", 0).set("location", rentalPoint.getLocation()).set("pointid",rentalPoint.getId()), my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle.class);
         return res;
     }
 
