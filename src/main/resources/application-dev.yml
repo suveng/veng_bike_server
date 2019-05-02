@@ -1,0 +1,62 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bike?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: my.suveng.server.config.MySQL5DialectUTF8
+        hbm2ddl:
+          auto: update
+        format_sql: true
+  freemarker:
+    template-loader-path: classpath:/templates/
+    cache: false
+    charset: utf-8
+    allow-request-override: false
+    allow-session-override: false
+    check-template-location: true
+    content-type: text/html
+    enabled: true
+    expose-request-attributes: false
+    expose-session-attributes: false
+    expose-spring-macro-helpers: true
+    prefer-file-system-access: true
+    #    prefix:                                               #在构建URL时添加前缀
+    request-context-attribute: request                    #在 ftl 中使用 request.contextPath
+    settings: {"date_format":"yyyy-MM-dd","datetime_format":"yyyy-MM-dd HH:mm:ss"}
+    #    view-names:
+    suffix: .ftl
+
+#mongodb
+  data:
+    mongodb:
+      port: 27017
+      host: 132.232.71.94
+      database: bike
+#视图解析
+  mvc:
+    view:
+      prefix: /pages/
+      suffix: .html
+#redis
+  redis:
+    host: 132.232.71.94
+    port: 6379
+#    password: root
+    jedis:
+      pool:
+        max-wait: 1
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+# MyBatis注解形式扫描实体类路径
+# MyBatis XML形式配置文件路径
+mybatis:
+  type-aliases-package: my.suveng.server.*.pojo.mysql
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:my/suveng/server/*/dao/*.xml
