@@ -21,17 +21,18 @@ import java.util.Date;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity
 @EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "recharge_record")
 public class RechargeRecord extends BaseRowModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ExcelProperty(value = "充值id",index = 0)
     private Long rechareId;
 
-    @Column(columnDefinition = "bigint(20) NOT NULL DEFAULT 0  COMMENT '用户id'")
+    @Column(columnDefinition = "varchar(255) NOT NULL DEFAULT ''  COMMENT '用户id'")
     @ExcelProperty(value = "用户id",index = 1)
-    private Long userId;
+    private String userId;
 
     @Column(columnDefinition = "double(255,2) NOT NULL DEFAULT '0.000000' COMMENT '充值金额'")
     @ExcelProperty(value = "充值金额", index = 2)

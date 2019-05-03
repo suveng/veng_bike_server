@@ -1,10 +1,8 @@
 package my.suveng.server.modules.rental.dao;
 
-import my.suveng.server.modules.rental.model.po.RentalPoint;
 import my.suveng.server.modules.rental.model.po.RentalRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 
 /**
  * @author suwenguang

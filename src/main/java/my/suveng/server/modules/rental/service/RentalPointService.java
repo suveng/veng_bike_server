@@ -14,9 +14,12 @@ import java.util.List;
  * description:
  **/
 public interface RentalPointService {
-    boolean save(RentalPoint rentalPoint);
+    boolean save(RentalPointMongo rentalPointMongo);
 
     List<RentalPointMongo> findAll();
 
     GeoResults<RentalPointMongo> findNear(Double longitude, Double latitude);
+
+    RentalPoint findLastId();
+
 }

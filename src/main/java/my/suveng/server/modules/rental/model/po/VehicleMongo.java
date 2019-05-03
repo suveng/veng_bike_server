@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "vehicles")
 public class VehicleMongo {
     @Id
-    private Long id;
+    private String id;
 
     /**
      * 对应二维码
@@ -31,26 +31,26 @@ public class VehicleMongo {
     /**
      * 归属的租车点
      */
-    private String pointid;
+    private Long pointId;
 
     public VehicleMongo() {
     }
 
-    public VehicleMongo(String id, String qrCode, double[] location, Integer status, String pointid) {
+    public VehicleMongo(String id, String qrCode, double[] location, Integer status, String pointId) {
         this.id = id;
         this.qrCode = qrCode;
         this.location = location;
         this.status = status;
-        this.pointid = pointid;
+        this.pointId = Long.valueOf(pointId);
     }
 
-    public my.suveng.server.vehicle.pojo.mysql.Vehicle toMySQL() {
-        my.suveng.server.vehicle.pojo.mysql.Vehicle vehicle = new my.suveng.server.vehicle.pojo.mysql.Vehicle();
-        vehicle.setPointid(this.getPointid());
+    public Vehicle toMySQL() {
+        Vehicle vehicle = new Vehicle();
+        vehicle.setPointId(this.getPointId());
         vehicle.setLongitude(this.getLocation()[0]);
         vehicle.setLatitude(this.getLocation()[1]);
-        vehicle.setQrcode(this.getQrCode());
-        vehicle.setVehicleid(this.getId());
+        vehicle.setQrCode(this.getQrCode());
+        vehicle.setVehicleId(this.getId());
         vehicle.setType(0);
         return vehicle;
     }

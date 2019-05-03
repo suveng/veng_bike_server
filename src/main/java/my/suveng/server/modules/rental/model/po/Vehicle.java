@@ -20,13 +20,13 @@ import java.util.Date;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity
 @EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "vehicle")
 public class Vehicle extends BaseRowModel implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ExcelProperty(value = "车辆id", index = 0)
-    private Long vehicleId;
+    private String vehicleId;
 
     @Column(columnDefinition = "varchar(255) NOT NULL DEFAULT '' COMMENT '车辆二维码'")
     @ExcelProperty(value = "车辆二维码", index = 1)

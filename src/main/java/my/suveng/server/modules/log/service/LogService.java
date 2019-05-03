@@ -6,5 +6,5 @@ package my.suveng.server.modules.log.service;
  * date   18-8-27 下午10:27
  */
 public interface LogService {
-    public void log_ready(String log);
+    public void logReady(String log);
 }

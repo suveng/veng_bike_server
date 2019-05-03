@@ -2,7 +2,7 @@ package my.suveng.server.modules.user.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import my.suveng.server.common.REST.IndustrySMS;
-import my.suveng.server.common.enums.RentalRecordEums;
+import my.suveng.server.common.enums.RentalRecordEnums;
 import my.suveng.server.modules.charge.dao.RechargeRecordRepository;
 import my.suveng.server.modules.charge.model.po.RechargeRecord;
 import my.suveng.server.modules.rental.dao.RentalRecordRepository;
@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
      *
      * @return list
      */
+    @Override
     public Page<User> selectList(User user, int page, int size) {
         // 校验
         if (!ObjectUtils.allNotNull(user, page, size)) {
@@ -89,6 +90,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param user user
      */
+    @Override
     public void save(User user) {
         userRepository.save(user);
     }
@@ -96,15 +98,18 @@ public class UserServiceImpl implements UserService {
     /**
      * 清除所有数据
      */
+    @Override
     public void removeAll() {
         userRepository.deleteAll();
     }
 
 
+    @Override
     public void deposit(UserMongo user) {
         mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(user.getPhoneNum())), new Update().set("status", user.getStatus()).set("deposit", 299), User.class);
     }
 
+    @Override
     public boolean verify(UserMongo user) {
         boolean flag = false;
         String phoneNum = user.getPhoneNum();
@@ -125,6 +130,7 @@ public class UserServiceImpl implements UserService {
      *
      * @throws Exception 异常
      */
+    @Override
     public void genVerifyCode(String nationCode, String phoneNum) throws Exception {
         //todo://接口恢复
         //普通单发
@@ -184,6 +190,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param userMo 用户信息
      */
+    @Override
     public boolean identify(UserMongo userMo) {
         //参数校验
         if (!ObjectUtils.allNotNull(userMo)) {
@@ -194,7 +201,7 @@ public class UserServiceImpl implements UserService {
         }
         //调用阿里云接口
         if (idenAuthentication(userMo.getIdNum(), userMo.getName())) {
-            mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(userMo.getPhoneNum())), new Update().set("status", userMo.getStatus()).set("name", userMo.getName()).set("idNum", userMo.getIdNum()), User.class);
+            mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(userMo.getPhoneNum())), new Update().set("status", userMo.getStatus()).set("name", userMo.getName()).set("idNum", userMo.getIdNum()), UserMongo.class);
             List<UserMongo> userMongos = mongoTemplate.find(new Query(Criteria.where("phoneNum").is(userMo.getPhoneNum())), UserMongo.class);
             //只有实名认证通过才加入到MySQL
             for (UserMongo userMongo : userMongos) {
@@ -204,7 +211,7 @@ public class UserServiceImpl implements UserService {
                 user.setDeposit(userMongo.getDeposit());
                 user.setName(userMongo.getName());
                 user.setStatus(userMongo.getStatus());
-                user.setUserId(Long.valueOf(userMongo.getId()));
+                user.setUserId(userMongo.getId());
                 user.setPhone(userMongo.getPhoneNum());
                 userRepository.save(user);
             }
@@ -213,6 +220,7 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
     public void recharge(UserMongo userMongo, double charge, RechargeRecord rechargeRecord) {
 
         List<UserMongo> phoneNum = mongoTemplate.find(new Query(Criteria.where("phoneNum").is(userMongo.getPhoneNum())), UserMongo.class);
@@ -236,13 +244,15 @@ public class UserServiceImpl implements UserService {
         rechargeRecordRepository.save(rechargeRecord);
     }
 
+    @Override
     public UserMongo getUserByOpenid(String openid) {
         return mongoTemplate.findById(openid, UserMongo.class);
     }
 
-    public boolean checkRentalRecord(Long userId) {
+    @Override
+    public boolean checkRentalRecord(String userId) {
 
-        List<RentalRecord> rentalRecords = rentalRecordService.getByUserId(userId, RentalRecordEums.NOT_FINISH.getCode());
+        List<RentalRecord> rentalRecords = rentalRecordService.getByUserId(userId, RentalRecordEnums.NOT_FINISH.getCode());
         if (!CollectionUtils.isEmpty(rentalRecords) && rentalRecords.size() > 0) {
             return false;
         }

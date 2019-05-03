@@ -21,13 +21,13 @@ import java.util.Date;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity
 @EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "user")
 public class User extends BaseRowModel implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ExcelProperty(value = "用户id",index = 0)
-    private Long userId;
+    private String userId;
 
 
 
@@ -65,6 +65,7 @@ public class User extends BaseRowModel implements Serializable {
     @Column(nullable = false,columnDefinition = "TIMESTAMP not null DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     @ExcelProperty(value = "修改时间", index = 8)
     private Date updateTime;
+
 
 
 }

@@ -20,8 +20,9 @@ import java.util.Date;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity
 @EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "rental_point")
 public class RentalPoint extends BaseRowModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

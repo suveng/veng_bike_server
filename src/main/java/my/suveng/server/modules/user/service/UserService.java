@@ -12,5 +12,23 @@ import org.springframework.data.domain.Page;
  * description:
  **/
 public interface UserService {
+    Page<User> selectList(User user, int page, int size);
 
+    void save(User user);
+
+    void removeAll();
+
+    void deposit(UserMongo user);
+
+    boolean verify(UserMongo user);
+
+    void genVerifyCode(String nationCode, String phoneNum) throws Exception;
+
+    boolean identify(UserMongo userMo);
+
+    void recharge(UserMongo userMongo, double charge, RechargeRecord rechargeRecord);
+
+    UserMongo getUserByOpenid(String openid);
+
+    boolean checkRentalRecord(String userId);
 }

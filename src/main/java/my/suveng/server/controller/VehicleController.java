@@ -1,22 +1,23 @@
 package my.suveng.server.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import com.alibaba.fastjson.JSON;
+
+import lombok.extern.slf4j.Slf4j;
+import my.suveng.server.common.enums.RentalRecordEnums;
+import my.suveng.server.common.enums.VehicleStatusEnums;
 import my.suveng.server.common.response.Result;
 import my.suveng.server.common.response.ResultBuilder;
 import my.suveng.server.common.response.ResultEnums;
-import my.suveng.server.rentalpoint.pojo.mongo.RentalPoint;
-import my.suveng.server.rentalpoint.service.RentalPointService;
-import my.suveng.server.user.pojo.mongo.User;
-import my.suveng.server.user.service.UserService;
-import my.suveng.server.vehicle.dao.mysql.RentalRecordMapper;
-import my.suveng.server.vehicle.pojo.mongo.Vehicle;
-import my.suveng.server.vehicle.pojo.mysql.RentalRecord;
-import my.suveng.server.vehicle.service.VehicleService;
-import my.suveng.server.vehicle.vo.RntalRecordFlag;
+import my.suveng.server.modules.rental.model.po.*;
+import my.suveng.server.modules.rental.service.RentalPointService;
+import my.suveng.server.modules.rental.service.RentalRecordService;
+import my.suveng.server.modules.rental.service.VehicleService;
+import my.suveng.server.modules.user.model.po.UserMongo;
+import my.suveng.server.modules.user.service.UserService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
@@ -44,9 +45,11 @@ import java.util.UUID;
  * email  1344114844@qq.com
  * date   18-8-23 下午5:54
  */
-@Api(value = "vehicle", tags = {"vehicle接口模块"}, description = "动车相关")
 @Controller
+@Slf4j
 public class VehicleController {
+    @Autowired
+    private RentalRecordService rentalRecordService;
     @Resource
     private VehicleService vehicleService;
     @Resource
@@ -54,42 +57,43 @@ public class VehicleController {
     @Resource
     private MongoTemplate mongoTemplate;
     @Resource
-    private RentalRecordMapper rentalRecordMapper;
-    @Resource
     private UserService userService;
 
     @GetMapping("/hello")
     @ResponseBody
-    @ApiOperation(value = "测试")
     public String hello() {
         return "hello";
     }
 
 
+    /**
+     * 添加测试数据
+     * @return string
+     */
     @GetMapping("/addTestData")
     @ResponseBody
-    @ApiOperation(value = "添加测试数据")
     public String addTestData() {
-        List<RentalPoint> all = rentalPointService.findAll();
-        if (!ObjectUtils.allNotNull(all)) {
+        List<RentalPointMongo> rentalPointMongoList = rentalPointService.findAll();
+        if (!ObjectUtils.allNotNull(rentalPointMongoList)) {
             return "success";
         }
-        for (RentalPoint rentalPoint : all) {
+        for (RentalPointMongo
+                rentalPoint : rentalPointMongoList) {
             for (int i = 0; i < 30; i++) {
-                my.suveng.server.vehicle.pojo.mysql.Vehicle vehicle = new my.suveng.server.vehicle.pojo.mysql.Vehicle();
-                Vehicle mongoVe = new Vehicle();
+                Vehicle vehicle = new Vehicle();
+                VehicleMongo mongoVe = new VehicleMongo();
                 String id = UUID.randomUUID().toString().toLowerCase();
                 mongoVe.setId(id);
-                vehicle.setVehicleid(id);
-                vehicle.setQrcode(id);
+                vehicle.setVehicleId(id);
+                vehicle.setQrCode(id);
                 mongoVe.setQrCode(id);
                 double[] location = rentalPoint.getLocation();
                 mongoVe.setLocation(location);
                 vehicle.setLongitude(location[0]);
                 vehicle.setLatitude(location[1]);
 
-                mongoVe.setPointid(rentalPoint.getId());
-                vehicle.setPointid(rentalPoint.getId());
+                mongoVe.setPointId(rentalPoint.getId());
+                vehicle.setPointId(rentalPoint.getId());
                 vehicleService.save(mongoVe);
                 vehicleService.saveInMysql(vehicle);
             }
@@ -97,30 +101,47 @@ public class VehicleController {
         return "success";
     }
 
+    /**
+     * 查找全部车辆
+     * @return List<Vehicle>
+     */
     @GetMapping("/vehicles")
     @ResponseBody
-    @ApiOperation(value = "查找全部车辆")
-    public List<Vehicle> vehicles() {
-        List<Vehicle> list = vehicleService.findAll();
-        System.out.println(list);
+    public List<VehicleMongo> vehicles() {
+        List<VehicleMongo> list = vehicleService.findAll();
+        log.info("[vehicle]:vehicles:{}", JSON.toJSONString(list));
         return list;
     }
 
+    /**
+     * 查找附近车辆
+     * @param longitude 经度
+     * @param latitude 纬度
+     * @return GeoResults<Vehicle>
+     */
     @GetMapping("/vehicles/near")
     @ResponseBody
-    @ApiOperation(value = "查找附近车辆")
     public GeoResults<Vehicle> findNearVehicles(double longitude, double latitude) {
         return vehicleService.findNear(longitude, latitude);
     }
 
+    /**
+     * 返回车辆列表视图
+     * @return string
+     */
     @RequestMapping("/vehicle_list")
-    @ApiOperation(value = "返回车辆列表视图")
-    public String to_vehicle_list() {
+    public String toVehicleList() {
         return "vehicle/list";
     }
 
+    /**
+     * 预约租车
+     * @param longitude 经度
+     * @param latitude 纬度
+     * @param userId uid
+     * @return result
+     */
     @RequestMapping("/vehicle/reservate")
-    @ApiOperation(value = "预约租车")
     @ResponseBody
     @Transactional
     public Result reservate(String longitude, String latitude, String userId) {
@@ -132,58 +153,67 @@ public class VehicleController {
             return ResultBuilder.buildSimpleErrorResult();
         }
 
-        System.out.println(latitude + "-" + longitude + "-" + userId);
+        log.info("[vehicleMongo]:reservate:参数:longitude:{},latitude:{},userId:{}",longitude,latitude,userId);
 
         GeoResults<RentalPoint> near = null;
-        Double lo = Double.valueOf(longitude);
-        Double la = Double.valueOf(latitude);
+        double lo = Double.parseDouble(longitude);
+        double la = Double.parseDouble(latitude);
         NearQuery query = NearQuery.near(new Point(lo, la), Metrics.KILOMETERS).maxDistance(new Distance(1, Metrics.KILOMETERS)).query(new Query().limit(20));
         //查找最近的的租车点
-        GeoResults<RentalPoint> geoResults = mongoTemplate.geoNear(query, RentalPoint.class);
-        RentalPoint rentalPoint = geoResults.getContent().get(0).getContent();
-        rentalPoint.setLeft_bike(rentalPoint.getLeft_bike() - 1);
+        GeoResults<RentalPointMongo> geoResults = mongoTemplate.geoNear(query, RentalPointMongo.class);
+        RentalPointMongo rentalPoint = geoResults.getContent().get(0).getContent();
+        rentalPoint.setLeftBike(rentalPoint.getLeftBike() - 1);
 
         //更新mongo车辆状态
-        List<Vehicle> vehicles = mongoTemplate.find(Query.query(Criteria.where("pointid").is(rentalPoint.getId()).and("status").is(0)), Vehicle.class);
-        if (CollectionUtils.isEmpty(vehicles)) {
+        List<VehicleMongo> vehicleMongos = mongoTemplate.find(Query.query(Criteria.where("pointId").is(rentalPoint.getId()).and("status").is(0)), VehicleMongo.class);
+        if (CollectionUtils.isEmpty(vehicleMongos)) {
             return ResultBuilder.buildSimpleErrorResult();
         }
-        Vehicle vehicle = vehicles.get(0);
-        vehicle.setStatus(2);
-        System.out.println(vehicle.getId());
-        if (mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(vehicle.getId())), Update.update("status", vehicle.getStatus()), Vehicle.class).getModifiedCount() < 1) {
-            throw new RuntimeException("更新mongo车辆状态失败！");
+        VehicleMongo vehicleMongo = vehicleMongos.get(0);
+        vehicleMongo.setStatus(VehicleStatusEnums.BOOKED.getCode());
+        log.info("[vehicle]:预约成功,修改车辆状态成功,记录:{}",JSON.toJSONString(vehicleMongo));
+        System.out.println(vehicleMongo.getId());
+        if (mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(vehicleMongo.getId())), Update.update("status", vehicleMongo.getStatus()), VehicleMongo.class).getModifiedCount() < 1) {
+            throw new RuntimeException("[vehicle]:更新mongo车辆状态失败！");
         }
-        if (!vehicleService.updateMysql(vehicle.toMySQL())) {
+        if (!vehicleService.updateMysql(vehicleMongo.toMySQL())) {
             throw new RuntimeException("更新mysql车辆状态失败！");
         }
         //生成租赁记录
         RentalRecord rentalRecord = new RentalRecord();
-        rentalRecord.setIsfinish(RntalRecordFlag.BEGIN.getStatus());
-        rentalRecord.setBeginpoint(vehicle.getPointid());
-        rentalRecord.setBegintime(LocalDateTime.now().toDate());
-        rentalRecord.setUserid(userId);
-        rentalRecord.setVehicleid(vehicle.getId());
-        if (rentalRecordMapper.insertSelective(rentalRecord) < 1) {
+        rentalRecord.setStatus(RentalRecordEnums.NOT_FINISH.getCode());
+        rentalRecord.setBeginPointId(vehicleMongo.getPointId());
+        rentalRecord.setBeginTime(LocalDateTime.now().toDate());
+        rentalRecord.setUserId(userId);
+        rentalRecord.setVehicleId(vehicleMongo.getId());
+        try {
+            rentalRecordService.save(rentalRecord);
+        }catch (Exception e){
+            log.error("[vehicle]:预约租车,租赁记录,插入失败.记录为:{}",JSON.toJSONString(rentalRecord));
             throw new RuntimeException("生成租赁记录失败！");
         }
-        if (mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPoint.getId())), new Update().set("left_bike", rentalPoint.getLeft_bike()), RentalPoint.class).getModifiedCount() < 1) {
+        if (mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPoint.getId())), new Update().set("leftBike", rentalPoint.getLeftBike()), RentalPointMongo.class).getModifiedCount() < 1) {
             throw new RuntimeException("更新mongo租赁点失败！");
         }
         return ResultBuilder.buildSimpleSuccessResult();
     }
 
 
+    /**
+     * 解锁车辆
+     * @param vehicleNo 单车id
+     * @param id userid
+     * @return string
+     */
     @PostMapping("/vehicle/unlock")
     @ResponseBody
-    @ApiOperation(value = "解锁车辆")
     public String unlock(String vehicleNo, String id) {
         try {
-            Vehicle vehicle = new Vehicle();
-            User user = new User();
-            vehicle.setId(vehicleNo);
-            user.setId(id);
-            if (!vehicleService.unlock(user, vehicle)) {
+            VehicleMongo vehicleMongo = new VehicleMongo();
+            UserMongo userMongo = new UserMongo();
+            vehicleMongo.setId(vehicleNo);
+            userMongo.setId(id);
+            if (!vehicleService.unlock(userMongo, vehicleMongo)) {
                 return "fail";
             }
         } catch (Exception e) {
@@ -193,9 +223,15 @@ public class VehicleController {
         return "success";
     }
 
+    /**
+     * 上锁功能和计费功能:更新车辆状态，租车记录状态
+     * @param userId userId
+     * @param longitude 经度
+     * @param latitude 纬度
+     * @return result
+     */
     @RequestMapping("/vehicle/lock")
     @ResponseBody
-    @ApiOperation(value = "上锁功能和计费功能:更新车辆状态，租车记录状态")
     public Result lock(String userId,String longitude,String latitude) {
         if (StringUtils.isBlank(userId)){
             return ResultBuilder.buildSimpleIllegalArgumentError();
@@ -209,6 +245,13 @@ public class VehicleController {
             return ResultBuilder.buildSimpleErrorResult();
         }
         return ResultBuilder.buildSimpleIllegalArgumentError();
+    }
+    @RequestMapping("/re")
+    @ResponseBody
+    public Result re(){
+        RentalRecord rentalRecord = JSON.parseObject("{\"beginPointId\":2000000,\"beginTime\":1556864446846,\"cellStyleMap\":{},\"status\":0,\"userId\":\"o3mG94kJ8eJYMOJOmdduOskJo6ZQ\",\"vehicleId\":\"54487b66-27c8-42d2-88ce-d8f8404efc0c\"}", RentalRecord.class);
+        rentalRecordService.save(rentalRecord);
+        return ResultBuilder.buildSimpleSuccessResult();
     }
 
 }

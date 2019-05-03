@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * since 2019/3/19
  * description:
  **/
-public interface VehicleRepository extends JpaRepository<Vehicle,Long> {
+public interface VehicleRepository extends JpaRepository<Vehicle,String> {
 
 }

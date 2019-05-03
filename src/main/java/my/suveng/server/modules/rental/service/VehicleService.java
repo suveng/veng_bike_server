@@ -15,9 +15,9 @@ import java.util.Map;
  * description:
  **/
 public interface VehicleService {
-    void save(Vehicle vehicle);
+    void save(VehicleMongo vehicleMongo);
 
-    List<Vehicle> findAll();
+    List<VehicleMongo> findAll();
 
     GeoResults<Vehicle> findNear(double longitude, double latitude);
 

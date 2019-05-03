@@ -3,7 +3,7 @@ package my.suveng.server.modules.rental.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
-import my.suveng.server.common.enums.RentalRecordEums;
+import my.suveng.server.common.enums.RentalRecordEnums;
 import my.suveng.server.common.enums.VehicleStatusEnums;
 import my.suveng.server.modules.rental.dao.VehicleRepository;
 import my.suveng.server.modules.rental.model.po.*;
@@ -51,13 +51,13 @@ public class VehicleServiceImpl implements VehicleService {
     private RentalPointService rentalPointService;
 
     @Override
-    public void save(Vehicle vehicle) {
-        mongoTemplate.insert(vehicle);
+    public void save(VehicleMongo vehicleMongo) {
+        mongoTemplate.insert(vehicleMongo);
     }
 
     @Override
-    public List<Vehicle> findAll() {
-        return mongoTemplate.findAll(Vehicle.class, "bike");
+    public List<VehicleMongo> findAll() {
+        return mongoTemplate.findAll(VehicleMongo.class, "bike");
     }
 
     @Override
@@ -89,17 +89,17 @@ public class VehicleServiceImpl implements VehicleService {
             return false;
         }
         assert vehicleMongo != null;
-        if (!ObjectUtils.allNotNull(vehicleMongo.getPointid())) {
+        if (!ObjectUtils.allNotNull(vehicleMongo.getPointId())) {
             return false;
         }
         //检查是否是预留车
-        RentalPointMongo rentalPoint = mongoTemplate.findById(vehicleMongo.getPointid(), RentalPointMongo.class);
+        RentalPointMongo rentalPoint = mongoTemplate.findById(vehicleMongo.getPointId(), RentalPointMongo.class);
         if (!ObjectUtils.allNotNull(rentalPoint)) {
             return false;
         }
 
         assert userMongo != null;
-        List<RentalRecord> rentalRecords = rentalRecordService.getByUserId(userMongo.getId(), RentalRecordEums.NOT_FINISH.getCode());
+        List<RentalRecord> rentalRecords = rentalRecordService.getByUserId(userMongo.getId(), RentalRecordEnums.NOT_FINISH.getCode());
 
         if (!CollectionUtils.isEmpty(rentalRecords)) {
             if (rentalRecords.size() > 1) {
@@ -135,7 +135,7 @@ public class VehicleServiceImpl implements VehicleService {
     private boolean createRentalRecord(UserMongo user, VehicleMongo vehicleMongo, RentalPointMongo rentalPointMongo) {
         RentalRecord rentalRecord = new RentalRecord();
         rentalRecord.setStatus(RntalRecordFlag.BEGIN.getStatus());
-        rentalRecord.setBeginPointId(Long.valueOf(vehicleMongo.getPointid()));
+        rentalRecord.setBeginPointId(vehicleMongo.getPointId());
         rentalRecord.setBeginTime(LocalDateTime.now().toDate());
         rentalRecord.setUserId(user.getId());
         rentalRecord.setVehicleId(vehicleMongo.getId());
@@ -161,8 +161,7 @@ public class VehicleServiceImpl implements VehicleService {
         } else {
             log.info("[rental]:修改租赁点剩余车辆,失败");
         }
-        RentalPoint rentalPoint = rentalPointMongo.toMySQL(rentalPointMongo);
-        if (rentalPointService.save(rentalPoint)) {
+        if (rentalPointService.save(rentalPointMongo)) {
             log.error("[rental]:保存租赁点信息失败");
             return false;
         }
@@ -177,7 +176,7 @@ public class VehicleServiceImpl implements VehicleService {
         if (!ObjectUtils.allNotNull(userMongo)) {
             throw new RuntimeException("事务");
         }
-        List<RentalRecord> rentalRecords = rentalRecordService.getByUserId(Long.valueOf(userId), RentalRecordEums.NOT_FINISH.getCode());
+        List<RentalRecord> rentalRecords = rentalRecordService.getByUserId(userId, RentalRecordEnums.NOT_FINISH.getCode());
         if (CollectionUtils.isEmpty(rentalRecords)) {
             throw new RuntimeException("事务");
         }
@@ -210,7 +209,7 @@ public class VehicleServiceImpl implements VehicleService {
         } else {
             throw new RuntimeException("事务");
         }
-        rentalRecord.setStatus(RentalRecordEums.FINISH.getCode());
+        rentalRecord.setStatus(RentalRecordEnums.FINISH.getCode());
         rentalRecord.setEndTime(new Date());
         rentalRecordService.save(rentalRecord);
         //获取时间计算费用
@@ -231,7 +230,7 @@ public class VehicleServiceImpl implements VehicleService {
         //更新租赁点信息
         mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPoint.getId())), Update.update("left_bike", rentalPoint.getLeftBike()), rentalPoint.getClass());
         //更新车辆信息
-        mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(ve.getId())), Update.update("status", 0).set("location", rentalPoint.getLocation()).set("pointid", rentalPoint.getId()), Vehicle.class);
+        mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(ve.getId())), Update.update("status", 0).set("location", rentalPoint.getLocation()).set("pointId", rentalPoint.getId()), Vehicle.class);
         return res;
     }
 

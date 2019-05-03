@@ -15,7 +15,7 @@ public class LogServiceImpl implements LogService {
     @Autowired
     private MongoTemplate mongoTemplate;
     @Override
-    public void log_ready(String log) {
+    public void logReady(String log) {
         mongoTemplate.insert(log,"logs");
     }
 }

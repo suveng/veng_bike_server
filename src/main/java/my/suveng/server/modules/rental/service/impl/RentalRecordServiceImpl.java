@@ -25,7 +25,7 @@ public class RentalRecordServiceImpl implements RentalRecordService {
     private RentalRecordRepository rentalRecordRepository;
 
     @Override
-    public List<RentalRecord> getByUserId(Long userId, int status) {
+    public List<RentalRecord> getByUserId(String userId, int status) {
         ExampleMatcher matcher = ExampleMatcher.matching()
                         .withNullHandler(ExampleMatcher.NullHandler.IGNORE)
                         .withMatcher("userId", ExampleMatcher.GenericPropertyMatchers.exact())
@@ -41,7 +41,7 @@ public class RentalRecordServiceImpl implements RentalRecordService {
     @Override
     public boolean save(RentalRecord rentalRecord) {
         try {
-            rentalRecordRepository.save(rentalRecord);
+            rentalRecordRepository.saveAndFlush(rentalRecord);
         }catch (Exception e){
             log.error("[rental]:租赁记录插入失败",e);
             log.error("[rental]:记录为:{}", JSON.toJSONString(rentalRecord));

@@ -6,7 +6,7 @@ package my.suveng.server.common.enums;
  * since 2019/5/1
  * description:
  **/
-public enum RentalRecordEums {
+public enum RentalRecordEnums {
     /**
      * 未完成
      */
@@ -17,7 +17,7 @@ public enum RentalRecordEums {
     FINISH(1,"已完成"),
     ;
 
-    RentalRecordEums(Integer code, String msg) {
+    RentalRecordEnums(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }

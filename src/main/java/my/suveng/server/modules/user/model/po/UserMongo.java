@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class UserMongo {
 
     @Id
-    private Long id;
+    private String id;
 
     private int status;
 

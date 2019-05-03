@@ -12,7 +12,7 @@ import java.util.List;
  **/
 public interface RentalRecordService {
 
-    List<RentalRecord> getByUserId(Long userId, int status);
+    List<RentalRecord> getByUserId(String userId, int status);
 
     boolean save(RentalRecord rentalRecord);
 }

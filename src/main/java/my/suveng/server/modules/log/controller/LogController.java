@@ -20,8 +20,8 @@ public class LogController {
     private LogService logService;
     @PostMapping("/log/ready")
     @ResponseBody
-    public String log_ready(@RequestBody String log){
-        logService.log_ready(log);
+    public String logReady(@RequestBody String log){
+        logService.logReady(log);
         return "success";
     }
 }
