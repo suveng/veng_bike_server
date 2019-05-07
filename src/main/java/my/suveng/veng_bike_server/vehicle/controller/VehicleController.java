@@ -2,6 +2,7 @@ package my.suveng.veng_bike_server.vehicle.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import my.suveng.veng_bike_server.common.response.Result;
 import my.suveng.veng_bike_server.common.response.ResultBuilder;
 import my.suveng.veng_bike_server.common.response.ResultEnums;
@@ -48,6 +49,7 @@ import java.util.UUID;
  */
 @Api(value = "vehicle", tags = {"vehicle接口模块"}, description = "动车相关")
 @Controller
+@Slf4j
 public class VehicleController {
     @Resource
     private VehicleService vehicleService;
@@ -126,12 +128,13 @@ public class VehicleController {
     @ResponseBody
     @Transactional
     public Result reservate(String longitude, String latitude, String userId) {
-
+        log.info("[vehicle]预约租车");
         if (!ObjectUtils.allNotNull(latitude, longitude, userId)) {
             return ResultBuilder.buildSimpleErrorResult();
         }
         //只能预约一辆
         if (!userService.checkRentalRecord(userId)) {
+            log.error("[]");
             return ResultBuilder.buildSimpleErrorResult();
         }
 
