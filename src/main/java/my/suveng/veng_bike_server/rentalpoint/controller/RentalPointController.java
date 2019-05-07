@@ -35,7 +35,7 @@ public class RentalPointController {
     @ApiOperation(value = "手动创建租车点")
     public void save(@RequestBody RentalPoint rentalPoint){
         rentalPoint.setId(UUID.randomUUID().toString().toLowerCase().replace("-", ""));
-        rentalPoint.setLeft_bike(300);
+        rentalPoint.setLeft_bike(30);
         rentalPointService.save(rentalPoint);
     }
 
