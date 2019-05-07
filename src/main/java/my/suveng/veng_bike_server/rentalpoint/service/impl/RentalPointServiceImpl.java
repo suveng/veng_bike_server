@@ -85,7 +85,7 @@ public class RentalPointServiceImpl implements RentalPointService {
         //指定nearquery 相当于查询条件
         NearQuery nearQuery = NearQuery.near(new Point(longitude, latitude), Metrics.KILOMETERS);
         //查找附近1公里内的租车点
-        nearQuery.maxDistance(1).query(new Query().limit(20));
+        nearQuery.maxDistance(0.2).query(new Query().limit(20));
         //通过mongo 的geohash算法的接口计算出来。
         return mongoTemplate.geoNear(nearQuery, RentalPoint.class);
     }

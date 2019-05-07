@@ -126,6 +126,7 @@ public class VehicleController {
     @ResponseBody
     @Transactional
     public Result reservate(String longitude, String latitude, String userId) {
+
         if (!ObjectUtils.allNotNull(latitude, longitude, userId)) {
             return ResultBuilder.buildSimpleErrorResult();
         }
