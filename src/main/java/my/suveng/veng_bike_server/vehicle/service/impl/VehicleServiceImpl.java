@@ -9,6 +9,7 @@ import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPointMongo;
 import my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint;
 import my.suveng.veng_bike_server.rentalpoint.service.RentalPointService;
 import my.suveng.veng_bike_server.user.pojo.mongo.UserMongo;
+import my.suveng.veng_bike_server.user.service.UserService;
 import my.suveng.veng_bike_server.vehicle.dao.mysql.RentalRecordMapper;
 import my.suveng.veng_bike_server.vehicle.dao.mysql.VehicleMapper;
 import my.suveng.veng_bike_server.vehicle.pojo.mongo.VehicleMongo;
@@ -57,6 +58,8 @@ public class VehicleServiceImpl implements VehicleService {
     RentalPointMapper rentalPointMapper;
     @Autowired
     private RentalPointService rentalPointService;
+    @Autowired
+    private UserService userService;
 
     @Override
     public void save(VehicleMongo bike) {
@@ -220,8 +223,18 @@ public class VehicleServiceImpl implements VehicleService {
         res.put("cost", String.valueOf(cost));
         double balance = userMongo.getBalance();
         res.put("balence", String.valueOf(balance));
+        boolean toPay = false;
         if (cost > balance) {
+            toPay=true;
             res.put("toPay", "true");
+        }
+        //进行扣费
+        if (!toPay){
+            userMongo.setBalance(balance-cost);
+            mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userMongo.getId())), Update.update("deposit",userMongo.getBalance()),UserMongo.class);
+            if (userService.save(userMongo.toMysql())){
+                log.info("[vehicle]扣费成功");
+            }
         }
         //更新租赁点信息
         mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPointMongo.getId())), Update.update("left_bike", rentalPointMongo.getLeft_bike()), rentalPointMongo.getClass());

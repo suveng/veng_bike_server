@@ -7,6 +7,7 @@ import my.suveng.veng_bike_server.user.dao.mysql.RechargeRecordMapper;
 import my.suveng.veng_bike_server.user.dao.mysql.UserMapper;
 import my.suveng.veng_bike_server.user.pojo.mongo.UserMongo;
 import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
+import my.suveng.veng_bike_server.user.pojo.mysql.User;
 import my.suveng.veng_bike_server.user.service.UserService;
 import my.suveng.veng_bike_server.vehicle.dao.mysql.RentalRecordMapper;
 import my.suveng.veng_bike_server.vehicle.pojo.mysql.RentalRecord;
@@ -197,6 +198,11 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         return rentalRecords.size() == 0;
+    }
+
+    @Override
+    public boolean save(User toMysql) {
+        return userMapper.updateByPrimaryKeySelective(toMysql) >= 1;
     }
 }
 

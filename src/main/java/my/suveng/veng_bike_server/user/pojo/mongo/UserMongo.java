@@ -1,8 +1,8 @@
 package my.suveng.veng_bike_server.user.pojo.mongo;
 
 
-
 import lombok.Data;
+import my.suveng.veng_bike_server.user.pojo.mysql.User;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * date   18-9-9 上午10:21
  */
 
-@Document(collection="users")
+@Document(collection = "users")
 @Data
 public class UserMongo {
 
@@ -41,4 +41,15 @@ public class UserMongo {
     @Transient
     private String verifyCode;
 
+    public User toMysql() {
+        User res = new User();
+        res.setBalance(this.balance);
+        res.setDeposit(this.deposit);
+        res.setIdnum(this.idNum);
+        res.setName(this.name);
+        res.setPhonenum(this.phoneNum);
+        res.setStatus(this.getStatus());
+        res.setUserid(this.getId());
+        return res;
+    }
 }

@@ -2,6 +2,7 @@ package my.suveng.veng_bike_server.user.service;
 
 import my.suveng.veng_bike_server.user.pojo.mongo.UserMongo;
 import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
+import my.suveng.veng_bike_server.user.pojo.mysql.User;
 
 /**
  * author Veng Su
@@ -37,4 +38,6 @@ public interface UserService {
     void recharge(UserMongo userMongo, double charge, RechargeRecord rechargeRecord);
 
     boolean checkRentalRecord(String userId);
+
+    boolean save(User toMysql);
 }
