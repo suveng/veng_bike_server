@@ -1,8 +1,9 @@
 package my.suveng.veng_bike_server.rentalpoint.controller;
 
 import io.swagger.annotations.ApiOperation;
-import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPoint;
+import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPointMongo;
 import my.suveng.veng_bike_server.rentalpoint.service.RentalPointService;
+import my.suveng.veng_bike_server.vehicle.pojo.mongo.VehicleMongo;
 import my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle;
 import my.suveng.veng_bike_server.vehicle.service.VehicleService;
 import org.springframework.data.geo.GeoResults;
@@ -29,14 +30,14 @@ public class RentalPointController {
 
     /**
      * 手动创建租车点
-     * @param rentalPoint 租车点
+     * @param rentalPointMongo 租车点
      */
     @PostMapping("/rental/save")
     @ApiOperation(value = "手动创建租车点")
-    public void save(@RequestBody RentalPoint rentalPoint){
-        rentalPoint.setId(UUID.randomUUID().toString().toLowerCase().replace("-", ""));
-        rentalPoint.setLeft_bike(30);
-        rentalPointService.save(rentalPoint);
+    public void save(@RequestBody RentalPointMongo rentalPointMongo) {
+        rentalPointMongo.setId(UUID.randomUUID().toString().toLowerCase().replace("-", ""));
+        rentalPointMongo.setLeft_bike(30);
+        rentalPointService.save(rentalPointMongo);
     }
 
     /**
@@ -45,7 +46,7 @@ public class RentalPointController {
      */
     @GetMapping("/rental/findAll")
     @ApiOperation(value = "查询所有租车点")
-    public List<RentalPoint> findAllRentals(){
+    public List<RentalPointMongo> findAllRentals() {
         return rentalPointService.findAll();
     }
 
@@ -57,23 +58,23 @@ public class RentalPointController {
      */
     @GetMapping("/rental/findNearRentals")
     @ApiOperation(value = "附近1公里的租车点")
-    public GeoResults<RentalPoint> findNearRentals(double longitude, double latitude) {
-        GeoResults<RentalPoint> near = rentalPointService.findNear(longitude, latitude);
+    public GeoResults<RentalPointMongo> findNearRentals(double longitude, double latitude) {
+        GeoResults<RentalPointMongo> near = rentalPointService.findNear(longitude, latitude);
         return near;
     }
 
     @PostMapping("/rental/generate")
-    public void generateVehicle(){
-        int bikeNo=1000001;
-        List<RentalPoint> all = rentalPointService.findAll();
-        for (RentalPoint rentalPoint: all){
+    public void generateVehicle() {
+        int bikeNo = 1000001;
+        List<RentalPointMongo> all = rentalPointService.findAll();
+        for (RentalPointMongo rentalPointMongo : all) {
             for (int i = 0; i < 300; i++) {
-                String No=String.valueOf(bikeNo);
-                double longitude=rentalPoint.getLocation()[0];
-                double latitude = rentalPoint.getLocation()[1];
-                String pointid=rentalPoint.getId();
-                bikeService.save(new my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle(No,No,rentalPoint.getLocation(),0,pointid));
-                bikeService.saveInMysql(new Vehicle(No,No,longitude,latitude,0,0,pointid));
+                String No = String.valueOf(bikeNo);
+                double longitude = rentalPointMongo.getLocation()[0];
+                double latitude = rentalPointMongo.getLocation()[1];
+                String pointid = rentalPointMongo.getId();
+                bikeService.save(new VehicleMongo(No, No, rentalPointMongo.getLocation(), 0, pointid));
+                bikeService.saveInMysql(new Vehicle(No, No, longitude, latitude, 0, 0, pointid));
                 bikeNo++;
             }
         }

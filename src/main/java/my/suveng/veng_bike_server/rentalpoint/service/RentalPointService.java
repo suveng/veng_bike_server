@@ -1,6 +1,7 @@
 package my.suveng.veng_bike_server.rentalpoint.service;
 
-import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPoint;
+import my.suveng.veng_bike_server.rentalpoint.pojo.mongo.RentalPointMongo;
+import my.suveng.veng_bike_server.rentalpoint.pojo.mysql.RentalPoint;
 import org.springframework.data.geo.GeoResults;
 
 import java.util.List;
@@ -11,9 +12,11 @@ import java.util.List;
  * email: suveng@163.com
  **/
 public interface RentalPointService {
-    void save(RentalPoint rentalPoint);
+    void save(RentalPointMongo rentalPointMongo);
 
-    List<RentalPoint> findAll();
+    List<RentalPointMongo> findAll();
 
-    GeoResults<RentalPoint> findNear(Double longitude, Double latitude);
+    GeoResults<RentalPointMongo> findNear(Double longitude, Double latitude);
+
+    boolean update(RentalPoint rentalPointMysql);
 }

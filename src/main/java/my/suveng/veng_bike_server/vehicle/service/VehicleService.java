@@ -1,8 +1,8 @@
 package my.suveng.veng_bike_server.vehicle.service;
 
-import my.suveng.veng_bike_server.user.pojo.mongo.User;
-import my.suveng.veng_bike_server.vehicle.pojo.mongo.Vehicle;
-import org.apache.commons.lang3.StringUtils;
+import my.suveng.veng_bike_server.user.pojo.mongo.UserMongo;
+import my.suveng.veng_bike_server.vehicle.pojo.mongo.VehicleMongo;
+import my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle;
 import org.springframework.data.geo.GeoResults;
 
 import java.util.List;
@@ -14,18 +14,18 @@ import java.util.Map;
  * date   18-8-25 下午7:03
  */
 public interface VehicleService {
-    void save(Vehicle vehicle);
+    void save(VehicleMongo vehicleMongo);
 
-    List<Vehicle> findAll();
+    List<VehicleMongo> findAll();
 
-    GeoResults<Vehicle> findNear(double longitude, double latitude);
+    GeoResults<VehicleMongo> findNear(double longitude, double latitude);
 
-    boolean saveInMysql(my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle vehicle);
+    boolean saveInMysql(Vehicle vehicle);
 
-    boolean unlock(User user, Vehicle vehicle);
+    boolean unlock(UserMongo userMongo, VehicleMongo vehicleMongo);
 
     Map lock(String userId, Double lo, Double la);
 
-    boolean updateMysql(my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle toMySQL);
+    boolean updateMysql(Vehicle toMySQL);
 
 }

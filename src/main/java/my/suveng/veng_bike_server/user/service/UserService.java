@@ -1,6 +1,6 @@
 package my.suveng.veng_bike_server.user.service;
 
-import my.suveng.veng_bike_server.user.pojo.mongo.User;
+import my.suveng.veng_bike_server.user.pojo.mongo.UserMongo;
 import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
 
 /**
@@ -19,22 +19,22 @@ public interface UserService {
 
     /**
      * 校验验证码
-     * @param user 用户信息
+     * @param userMongo 用户信息
      * @return true:校验通过，false：校验失败
      */
-    boolean verify(User user);
+    boolean verify(UserMongo userMongo);
 
-    void deposit(User user);
+    void deposit(UserMongo userMongo);
 
     /**
      * 实名认证接口
-     * @param user 用户信息
+     * @param userMongo 用户信息
      */
-    boolean identify(User user);
+    boolean identify(UserMongo userMongo);
 
-    User getUserByOpenid(String openid);
+    UserMongo getUserByOpenid(String openid);
 
-    void recharge(User user, double charge, RechargeRecord rechargeRecord);
+    void recharge(UserMongo userMongo, double charge, RechargeRecord rechargeRecord);
 
     boolean checkRentalRecord(String userId);
 }

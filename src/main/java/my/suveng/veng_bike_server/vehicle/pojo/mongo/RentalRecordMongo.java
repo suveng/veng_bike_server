@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 @Document(collection = "rentalrecords")
 @Data
-public class RentalRecord {
+public class RentalRecordMongo {
     @Id
     private String rentalId;
 

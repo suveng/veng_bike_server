@@ -47,13 +47,6 @@
         </dependency>
         <!--end-->
 
-        <!--devtools组件-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-        <!--end-->
-
         <!--mysql 连接驱动-->
         <dependency>
             <groupId>mysql</groupId>

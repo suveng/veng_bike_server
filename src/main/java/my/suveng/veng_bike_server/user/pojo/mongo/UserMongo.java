@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="users")
 @Data
-public class User {
+public class UserMongo {
 
     @Id
     private String id;

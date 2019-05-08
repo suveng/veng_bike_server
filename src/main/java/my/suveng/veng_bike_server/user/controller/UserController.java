@@ -2,10 +2,9 @@ package my.suveng.veng_bike_server.user.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import my.suveng.veng_bike_server.user.pojo.mongo.User;
+import my.suveng.veng_bike_server.user.pojo.mongo.UserMongo;
 import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
 import my.suveng.veng_bike_server.user.service.UserService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,8 +54,8 @@ public class UserController {
     @PostMapping("/verify")
     @ResponseBody
     @ApiOperation(value = "验证用户信息")
-    public boolean verify(User user) {
-        return userService.verify(user);
+    public boolean verify(UserMongo userMongo) {
+        return userService.verify(userMongo);
     }
     @PostMapping("/reg")
     @ResponseBody
@@ -70,15 +69,15 @@ public class UserController {
     @PostMapping("/deposit")
     @ResponseBody
     @ApiOperation(value = "交押金")
-    public String deposit(User user) {
-        userService.deposit(user);
+    public String deposit(UserMongo userMongo) {
+        userService.deposit(userMongo);
         return "success";
     }
     @PostMapping("/identify")
     @ResponseBody
     @ApiOperation(value = "实名认证")
-    public String identify(User user) {
-        if (userService.identify(user)) {
+    public String identify(UserMongo userMongo) {
+        if (userService.identify(userMongo)) {
             return "success";
         }
         return "fail";
@@ -86,7 +85,7 @@ public class UserController {
     @GetMapping("/phoneNum/{openid}")
     @ResponseBody
     @ApiOperation(value = "根据openid拿到用户信息")
-    public User getPhoneNum(@PathVariable("openid") String openid) {
+    public UserMongo getPhoneNum(@PathVariable("openid") String openid) {
         return userService.getUserByOpenid(openid);
     }
 
@@ -98,9 +97,9 @@ public class UserController {
                            @RequestParam(value = "district",required = false) String district
     ){
         RechargeRecord rechargeRecord=new RechargeRecord(charge,province,city,district);
-        User user =new User();
-        user.setPhoneNum(phoneNum);
-        userService.recharge(user,charge,rechargeRecord);
+        UserMongo userMongo =new UserMongo();
+        userMongo.setPhoneNum(phoneNum);
+        userService.recharge(userMongo,charge,rechargeRecord);
         return "success";
     }
 }

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import my.suveng.veng_bike_server.common.REST.IndustrySMS;
 import my.suveng.veng_bike_server.user.dao.mysql.RechargeRecordMapper;
 import my.suveng.veng_bike_server.user.dao.mysql.UserMapper;
-import my.suveng.veng_bike_server.user.pojo.mongo.User;
+import my.suveng.veng_bike_server.user.pojo.mongo.UserMongo;
 import my.suveng.veng_bike_server.user.pojo.mysql.RechargeRecord;
 import my.suveng.veng_bike_server.user.service.UserService;
 import my.suveng.veng_bike_server.vehicle.dao.mysql.RentalRecordMapper;
@@ -46,18 +46,18 @@ public class UserServiceImpl implements UserService {
     private RentalRecordMapper rentalRecordMapper;
 
     @Override
-    public void deposit(User user) {
-        mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(user.getPhoneNum())), new Update().set("status", user.getStatus()).set("deposit", 299), User.class);
+    public void deposit(UserMongo userMongo) {
+        mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(userMongo.getPhoneNum())), new Update().set("status", userMongo.getStatus()).set("deposit", 299), UserMongo.class);
     }
 
     @Override
-    public boolean verify(User user) {
+    public boolean verify(UserMongo userMongo) {
         boolean flag = false;
-        String phoneNum = user.getPhoneNum();
-        String verifyCode = user.getVerifyCode();
+        String phoneNum = userMongo.getPhoneNum();
+        String verifyCode = userMongo.getVerifyCode();
         String code = stringRedisTemplate.opsForValue().get(phoneNum);
         if (verifyCode != null && verifyCode.equals(code)) {
-            mongoTemplate.save(user);
+            mongoTemplate.save(userMongo);
             flag = true;
         }
         return flag;
@@ -129,31 +129,31 @@ public class UserServiceImpl implements UserService {
     /**
      * 实名认证接口
      *
-     * @param user 用户信息
+     * @param userMongo 用户信息
      */
     @Override
-    public boolean identify(User user) {
+    public boolean identify(UserMongo userMongo) {
         //参数校验
-        if (!ObjectUtils.allNotNull(user)) {
+        if (!ObjectUtils.allNotNull(userMongo)) {
             return false;
         }
-        if (!ObjectUtils.allNotNull(user.getIdNum(), user.getName())) {
+        if (!ObjectUtils.allNotNull(userMongo.getIdNum(), userMongo.getName())) {
             return false;
         }
         //调用阿里云接口
-        if (idenAuthentication(user.getIdNum(), user.getName())) {
-            mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(user.getPhoneNum())), new Update().set("status", user.getStatus()).set("name", user.getName()).set("idNum", user.getIdNum()), User.class);
-            List<User> users = mongoTemplate.find(new Query(Criteria.where("phoneNum").is(user.getPhoneNum())), User.class);
+        if (idenAuthentication(userMongo.getIdNum(), userMongo.getName())) {
+            mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(userMongo.getPhoneNum())), new Update().set("status", userMongo.getStatus()).set("name", userMongo.getName()).set("idNum", userMongo.getIdNum()), UserMongo.class);
+            List<UserMongo> userMongos = mongoTemplate.find(new Query(Criteria.where("phoneNum").is(userMongo.getPhoneNum())), UserMongo.class);
             //只有实名认证通过才加入到MySQL
-            for (User user1 : users) {
+            for (UserMongo userMongo1 : userMongos) {
                 my.suveng.veng_bike_server.user.pojo.mysql.User user2 = new my.suveng.veng_bike_server.user.pojo.mysql.User();
-                user2.setIdnum(user1.getIdNum());
-                user2.setBalance(user1.getBalance());
-                user2.setDeposit(user1.getDeposit());
-                user2.setName(user1.getName());
-                user2.setStatus(user1.getStatus());
-                user2.setUserid(user1.getId());
-                user2.setPhonenum(user1.getPhoneNum());
+                user2.setIdnum(userMongo1.getIdNum());
+                user2.setBalance(userMongo1.getBalance());
+                user2.setDeposit(userMongo1.getDeposit());
+                user2.setName(userMongo1.getName());
+                user2.setStatus(userMongo1.getStatus());
+                user2.setUserid(userMongo1.getId());
+                user2.setPhonenum(userMongo1.getPhoneNum());
                 userMapper.insertSelective(user2);
             }
             return true;
@@ -162,32 +162,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void recharge(User user, double charge, RechargeRecord rechargeRecord) {
+    public void recharge(UserMongo userMongo, double charge, RechargeRecord rechargeRecord) {
 
-        List<User> phoneNum = mongoTemplate.find(new Query(Criteria.where("phoneNum").is(user.getPhoneNum())), User.class);
-        user = phoneNum.get(0);
-        double new_balance = user.getBalance() + charge;
-        user.setBalance(new_balance);
-        rechargeRecord.setUserid(user.getId());
+        List<UserMongo> phoneNum = mongoTemplate.find(new Query(Criteria.where("phoneNum").is(userMongo.getPhoneNum())), UserMongo.class);
+        userMongo = phoneNum.get(0);
+        double new_balance = userMongo.getBalance() + charge;
+        userMongo.setBalance(new_balance);
+        rechargeRecord.setUserid(userMongo.getId());
         mongoTemplate.updateFirst(
-                new Query(Criteria.where("phoneNum").is(user.getPhoneNum())),
-                new Update().set("balance", user.getBalance()), User.class);
+                new Query(Criteria.where("phoneNum").is(userMongo.getPhoneNum())),
+                new Update().set("balance", userMongo.getBalance()), UserMongo.class);
 
         my.suveng.veng_bike_server.user.pojo.mysql.User user1 = new my.suveng.veng_bike_server.user.pojo.mysql.User();
-        user1.setUserid(user.getId());
-        user1.setStatus(user.getStatus());
-        user1.setName(user.getName());
-        user1.setDeposit(user.getDeposit());
-        user1.setBalance(user.getBalance());
-        user1.setIdnum(user.getIdNum());
-        user1.setPhonenum(user.getPhoneNum());
+        user1.setUserid(userMongo.getId());
+        user1.setStatus(userMongo.getStatus());
+        user1.setName(userMongo.getName());
+        user1.setDeposit(userMongo.getDeposit());
+        user1.setBalance(userMongo.getBalance());
+        user1.setIdnum(userMongo.getIdNum());
+        user1.setPhonenum(userMongo.getPhoneNum());
         userMapper.updateByPrimaryKey(user1);
         rechargeRecordMapper.insertSelective(rechargeRecord);
     }
 
     @Override
-    public User getUserByOpenid(String openid) {
-        return mongoTemplate.findById(openid, User.class);
+    public UserMongo getUserByOpenid(String openid) {
+        return mongoTemplate.findById(openid, UserMongo.class);
     }
 
     @Override

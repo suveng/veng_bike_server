@@ -1,6 +1,7 @@
 package my.suveng.veng_bike_server.vehicle.pojo.mongo;
 
 import lombok.Data;
+import my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
@@ -8,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "vehicles")
-public class Vehicle {
+public class VehicleMongo {
     @Id
     private String id;
 
@@ -33,10 +34,10 @@ public class Vehicle {
      */
     private String pointid;
 
-    public Vehicle() {
+    public VehicleMongo() {
     }
 
-    public Vehicle(String id, String qrCode, double[] location, Integer status, String pointid) {
+    public VehicleMongo(String id, String qrCode, double[] location, Integer status, String pointid) {
         this.id = id;
         this.qrCode = qrCode;
         this.location = location;
@@ -45,13 +46,14 @@ public class Vehicle {
     }
 
     public my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle toMySQL() {
-        my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle vehicle = new my.suveng.veng_bike_server.vehicle.pojo.mysql.Vehicle();
+        Vehicle vehicle = new Vehicle();
         vehicle.setPointid(this.getPointid());
         vehicle.setLongitude(this.getLocation()[0]);
         vehicle.setLatitude(this.getLocation()[1]);
         vehicle.setQrcode(this.getQrCode());
         vehicle.setVehicleid(this.getId());
         vehicle.setType(0);
+        vehicle.setStatus(this.getStatus());
         return vehicle;
     }
 }
