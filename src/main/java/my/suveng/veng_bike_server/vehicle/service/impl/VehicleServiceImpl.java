@@ -231,7 +231,7 @@ public class VehicleServiceImpl implements VehicleService {
         //进行扣费
         if (!toPay){
             userMongo.setBalance(balance-cost);
-            mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userMongo.getId())), Update.update("deposit",userMongo.getBalance()),UserMongo.class);
+            mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userMongo.getId())), Update.update("balance",userMongo.getBalance()),UserMongo.class);
             if (userService.save(userMongo.toMysql())){
                 log.info("[vehicle]扣费成功");
             }
