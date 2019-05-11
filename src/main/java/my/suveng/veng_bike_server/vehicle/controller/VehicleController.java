@@ -213,7 +213,6 @@ public class VehicleController {
                 return "fail";
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return "fail";
         }
         return "success";

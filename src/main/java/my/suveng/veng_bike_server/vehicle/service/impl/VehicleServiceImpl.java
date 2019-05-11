@@ -87,7 +87,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public boolean unlock(UserMongo userMongo, VehicleMongo bike) {
-        log.info("[vehicle]:userId:{},解锁车辆vehicleId:{}", userMongo.getId(),bike.getId());
+        log.info("[vehicle]:userId:{},解锁车辆vehicleId:{}", userMongo.getId(), bike.getId());
         //检查
         bike = mongoTemplate.findById(bike.getId(), VehicleMongo.class);
         userMongo = mongoTemplate.findById(userMongo.getId(), UserMongo.class);
@@ -174,76 +174,91 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     @Transactional
-    public Map lock(String userId, Double lo, Double la) {
-        //根据userId查找订单
-        UserMongo userMongo = mongoTemplate.findById(userId, UserMongo.class);
-        if (!ObjectUtils.allNotNull(userMongo)) {
-            throw new RuntimeException("事务");
-        }
-        List<RentalRecord> rentalRecords = rentalRecordMapper.selectByUserId(userId, 0);
-        if (CollectionUtils.isEmpty(rentalRecords)) {
-            throw new RuntimeException("事务");
-        }
-        if (rentalRecords.size() != 1) {
-            throw new RuntimeException("事务");
-        }
-        //检查是否车辆状态是否租赁中
-        RentalRecord rentalRecord = rentalRecords.get(0);
-        VehicleMongo ve = mongoTemplate.findOne(Query.query(Criteria.where("id").is(rentalRecord.getVehicleid())), VehicleMongo.class);
-        if (!ve.getStatus().equals(1)) {
-            throw new RuntimeException("事务");
-        }
-        //完成订单
-        GeoResults<RentalPointMongo> geoResults = mongoTemplate.geoNear(NearQuery.near(lo, la).maxDistance(new Distance(1, Metrics.KILOMETERS)).query(new Query().limit(10)), RentalPointMongo.class);
-        List<GeoResult<RentalPointMongo>> content = geoResults.getContent();
-        if (CollectionUtils.isEmpty(content)) {
-            throw new RuntimeException("事务");
-        }
-        RentalPointMongo rentalPointMongo;
-        if (content.size() > 0) {
-            GeoResult<RentalPointMongo> rentalPointGeoResult = content.get(0);
-            rentalPointMongo = rentalPointGeoResult.getContent();
-            rentalRecord.setEndpoint(rentalPointMongo.getId());
-            //租赁点车辆增加
-            rentalPointMongo.setLeft_bike(rentalPointMongo.getLeft_bike() + 1);
-        } else {
-            throw new RuntimeException("事务");
-        }
-        rentalRecord.setIsfinish(1);
-        rentalRecord.setEndtime(new Date());
-        rentalRecordMapper.updateByPrimaryKeySelective(rentalRecord);
-        //获取时间计算费用
-        Duration duration = new Duration(rentalRecord.getBegintime().getTime(), rentalRecord.getEndtime().getTime());
-        long standardHours = duration.getStandardHours();
-        if (standardHours == 0) {
-            standardHours = 1;
-        }
-        HashMap<String, String> res = new HashMap<>();
-        Double cost = Double.valueOf(standardHours * 10);
-        res.put("cost", String.valueOf(cost));
-        double balance = userMongo.getBalance();
-        res.put("balence", String.valueOf(balance));
-        boolean toPay = false;
-        if (cost > balance) {
-            toPay=true;
-            res.put("toPay", "true");
-        }
-        //进行扣费
-        if (!toPay){
-            userMongo.setBalance(balance-cost);
-            mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userMongo.getId())), Update.update("balance",userMongo.getBalance()),UserMongo.class);
-            if (userService.save(userMongo.toMysql())){
-                log.info("[vehicle]扣费成功");
+    public Map lock(String userId, Double lo, Double la) throws Exception {
+        VehicleMongo pre = null;
+        RentalPointMongo rentalPre = null;
+        try {
+            //根据userId查找订单
+            UserMongo userMongo = mongoTemplate.findById(userId, UserMongo.class);
+            if (!ObjectUtils.allNotNull(userMongo)) {
+                throw new RuntimeException("事务");
             }
+            List<RentalRecord> rentalRecords = rentalRecordMapper.selectByUserId(userId, 0);
+            if (CollectionUtils.isEmpty(rentalRecords)) {
+                throw new RuntimeException("事务");
+            }
+            if (rentalRecords.size() != 1) {
+                throw new RuntimeException("事务");
+            }
+            //检查是否车辆状态是否租赁中
+            RentalRecord rentalRecord = rentalRecords.get(0);
+            VehicleMongo ve = mongoTemplate.findOne(Query.query(Criteria.where("id").is(rentalRecord.getVehicleid())), VehicleMongo.class);
+            pre = ve;
+            if (!ve.getStatus().equals(1)) {
+                throw new RuntimeException("事务");
+            }
+            //完成订单
+            GeoResults<RentalPointMongo> geoResults = mongoTemplate.geoNear(NearQuery.near(lo, la).maxDistance(new Distance(1, Metrics.KILOMETERS)).query(new Query().limit(10)), RentalPointMongo.class);
+            List<GeoResult<RentalPointMongo>> content = geoResults.getContent();
+            if (CollectionUtils.isEmpty(content)) {
+                throw new RuntimeException("事务");
+            }
+            RentalPointMongo rentalPointMongo;
+            if (content.size() > 0) {
+                GeoResult<RentalPointMongo> rentalPointGeoResult = content.get(0);
+                rentalPointMongo = rentalPointGeoResult.getContent();
+                rentalRecord.setEndpoint(rentalPointMongo.getId());
+                //租赁点车辆增加
+                rentalPointMongo.setLeft_bike(rentalPointMongo.getLeft_bike() + 1);
+            } else {
+                throw new RuntimeException("事务");
+            }
+            rentalPre = rentalPointMongo;
+            rentalRecord.setIsfinish(1);
+            rentalRecord.setEndtime(new Date());
+            rentalRecordMapper.updateByPrimaryKeySelective(rentalRecord);
+            //获取时间计算费用
+            Duration duration = new Duration(rentalRecord.getBegintime().getTime(), rentalRecord.getEndtime().getTime());
+            long standardHours = duration.getStandardHours();
+            if (standardHours == 0) {
+                standardHours = 1;
+            }
+            HashMap<String, String> res = new HashMap<>();
+            Double cost = Double.valueOf(standardHours * 10);
+            res.put("cost", String.valueOf(cost));
+            double balance = userMongo.getBalance();
+            res.put("balence", String.valueOf(balance));
+            boolean toPay = false;
+            if (cost > balance) {
+                toPay = true;
+                res.put("toPay", "true");
+            }
+            //进行扣费
+            if (!toPay) {
+                userMongo.setBalance(balance - cost);
+                mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userMongo.getId())), Update.update("balance", userMongo.getBalance()), UserMongo.class);
+                if (userService.save(userMongo.toMysql())) {
+                    log.info("[vehicle]扣费成功");
+                }
+            }
+            //更新租赁点信息
+            mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPointMongo.getId())), Update.update("left_bike", rentalPointMongo.getLeft_bike()), rentalPointMongo.getClass());
+            rentalPointService.update(rentalPointMongo.toMySQL());
+            //更新车辆信息
+            ve.setStatus(VehicleEnums.WAIT.getCode());
+            mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(ve.getId())), Update.update("status", ve.getStatus()).set("location", rentalPointMongo.getLocation()).set("pointid", rentalPointMongo.getId()), VehicleMongo.class);
+            this.updateMysql(ve.toMySQL());
+            return res;
+        } catch (RuntimeException e) {
+            //手动处理mongo事务
+            if (ObjectUtils.allNotNull(pre)) {
+                mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(pre.getId())), Update.update("status", pre.getStatus()).set("location", pre.getLocation()).set("pointid", pre.getPointid()), VehicleMongo.class);
+            }
+            if (ObjectUtils.allNotNull(rentalPre)) {
+                mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPre.getId())), Update.update("left_bike", rentalPre.getLeft_bike()), rentalPre.getClass());
+            }
+            throw e;
         }
-        //更新租赁点信息
-        mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(rentalPointMongo.getId())), Update.update("left_bike", rentalPointMongo.getLeft_bike()), rentalPointMongo.getClass());
-        rentalPointService.update(rentalPointMongo.toMySQL());
-        //更新车辆信息
-        ve.setStatus(VehicleEnums.WAIT.getCode());
-        mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(ve.getId())), Update.update("status", ve.getStatus()).set("location", rentalPointMongo.getLocation()).set("pointid", rentalPointMongo.getId()), VehicleMongo.class);
-        this.updateMysql(ve.toMySQL());
-        return res;
     }
 
     @Override

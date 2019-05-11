@@ -24,7 +24,7 @@ public interface VehicleService {
 
     boolean unlock(UserMongo userMongo, VehicleMongo vehicleMongo);
 
-    Map lock(String userId, Double lo, Double la);
+    Map lock(String userId, Double lo, Double la) throws Exception;
 
     boolean updateMysql(Vehicle toMySQL);
 
